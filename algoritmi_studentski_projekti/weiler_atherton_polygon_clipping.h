@@ -22,9 +22,9 @@ public:
     void crtajNaivniAlgoritam(QPainter *painter) const final;
 
 private:
-    DCEL poligon1;
-    DCEL poligon2;
-    DCEL okvir;
+    DCEL _poligon1;
+    DCEL _poligon2;
+    DCEL _okvir;
 };
 
 #endif // WEILERATHERTONPOLYGONCLIPPING_H
