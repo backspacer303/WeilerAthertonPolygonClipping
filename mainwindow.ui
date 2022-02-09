@@ -815,6 +815,13 @@
          </property>
         </spacer>
        </item>
+       <item>
+        <widget class="QPushButton" name="WeilerAtherton_dugme">
+         <property name="text">
+          <string>Weiler-Atherton Podesavanja</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </item>

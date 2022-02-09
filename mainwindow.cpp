@@ -76,6 +76,12 @@ void MainWindow::animacijaButtonAktivni(bool param_aktivnosti)
     ui->Zaustavi_dugme->setEnabled(param_aktivnosti);
     ui->Zapocni_dugme->setEnabled(param_aktivnosti);
     ui->merenjeButton->setEnabled(param_aktivnosti);
+    ui->WeilerAtherton_dugme->setEnabled(param_aktivnosti);
+    if(TipAlgoritma::WEILER_ATHERTON == static_cast<TipAlgoritma>(ui->tipAlgoritma->currentIndex()))
+        ui->WeilerAtherton_dugme->show();
+    else
+        ui->WeilerAtherton_dugme->hide();
+
 }
 
 void MainWindow::animacijaParametriButtonAktivni(bool param_aktivnosti)
@@ -178,6 +184,7 @@ void MainWindow::on_tipAlgoritma_currentIndexChanged(int index)
 {
     animacijaButtonAktivni(false);
 
+
     TipAlgoritma tipAlgoritma = static_cast<TipAlgoritma>(index);
 
     /* Specijalne vrednosti imaju jedan skup dugmadi */
@@ -193,6 +200,11 @@ void MainWindow::on_tipAlgoritma_currentIndexChanged(int index)
         ui->datoteka_dugme->setEnabled(true);
         ui->Nasumicni_dugme->setEnabled(true);
         ui->merenjeButton->setEnabled(true);
+
+        if(tipAlgoritma == TipAlgoritma::WEILER_ATHERTON){
+            ui->WeilerAtherton_dugme->show();
+            ui->WeilerAtherton_dugme->setEnabled(true);
+        }
 
         /* DCEL ne podrzava rad sa nasumicnim tackama */
         if (tipAlgoritma == TipAlgoritma::DCEL_DEMO)
@@ -310,15 +322,19 @@ void MainWindow::napraviNoviAlgoritam()
         _pAlgoritamBaza = new Triangulation(_pOblastCrtanja, _duzinaPauze, _naivni,
                                             _imeDatoteke, _brojSlucajnihObjekata);
         break;
-   /* case TipAlgoritma::PRESEK_PRAVOUGAONIKA:
-        _pAlgoritamBaza = new PresekPravougaonika(_pOblastCrtanja, _duzinaPauze, _naivni,
+    /*
+    case TipAlgoritma::PRESEK_PRAVOUGAONIKA:
+       _pAlgoritamBaza = new PresekPravougaonika(_pOblastCrtanja, _duzinaPauze, _naivni,
                                                   _imeDatoteke, _brojSlucajnihObjekata);
-        break;*/
+        break;
+    */
+
 
     case TipAlgoritma::WEILER_ATHERTON:
         _pAlgoritamBaza = new WeilerAthertonPolygonClipping(_pOblastCrtanja, _duzinaPauze, _naivni,
                                                             _imeDatoteke, _brojSlucajnihObjekata);
         break;
+
 
     default: /* ako nije algoritam uopste */
         break;
