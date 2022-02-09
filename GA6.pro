@@ -19,6 +19,7 @@ SOURCES += \
     algoritmi_sa_vezbi/ga06_dcel.cpp \
     algoritmi_sa_vezbi/ga06_dceldemo.cpp \
     algoritmi_sa_vezbi/ga07_triangulation.cpp \
+    algoritmi_studentski_projekti/WeilerAthertonDialog.cpp \
     algoritmi_studentski_projekti/ga06_presekPravougaonika.cpp \
     algoritmi_studentski_projekti/weiler_atherton_polygon_clipping.cpp \
     animacijanit.cpp \
@@ -43,6 +44,7 @@ HEADERS += \
     algoritmi_sa_vezbi/ga06_dceldemo.h \
     algoritmi_sa_vezbi/ga07_datastructures.h \
     algoritmi_sa_vezbi/ga07_triangulation.h \
+    algoritmi_studentski_projekti/WeilerAthertonDialog.h \
     algoritmi_studentski_projekti/ga06_presekPravougaonika.h \
     algoritmi_studentski_projekti/weiler_atherton_polygon_clipping.h \
     animacijanit.h \
@@ -54,6 +56,7 @@ HEADERS += \
     timemeasurementthread.h
 
 FORMS += \
+    algoritmi_studentski_projekti/WeilerAthertonDialog.ui \
     mainwindow.ui
 
 # Default rules for deployment.

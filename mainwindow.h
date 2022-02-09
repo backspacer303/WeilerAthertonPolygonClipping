@@ -18,7 +18,9 @@
 #include "./algoritmi_sa_vezbi/ga06_dceldemo.h"
 #include "./algoritmi_sa_vezbi/ga07_triangulation.h"
 
+#include <iostream>
 #include "./algoritmi_studentski_projekti/weiler_atherton_polygon_clipping.h"
+#include "./algoritmi_studentski_projekti/WeilerAthertonDialog.h"
 
 //#include "ga06_presekPravougaonika.h"
 
@@ -58,6 +60,8 @@ public:
     MainWindow(QWidget *parent = nullptr);
     virtual ~MainWindow() override;
 
+    void setImenaDatotekaPoligona(std::string imeDatoteke1, std::string imeDatoteke2);
+
 private slots:
     void on_datoteka_dugme_clicked();
 
@@ -86,6 +90,8 @@ private slots:
 
     void na_krajuAnimacije();
 
+    void on_WeilerAtherton_dugme_clicked();
+
 private:
     void animacijaButtonAktivni(bool param_aktivnosti);
 
@@ -103,6 +109,10 @@ private:
     bool _naivni;
     int _duzinaPauze;
     int _brojSlucajnihObjekata;
+
+    //imena OFF gde se nalaze poligoni
+    std::string _imeDatotekePoligon_1;
+    std::string _imeDatotekePoligon_2;
 
     /* Chart deo */
     QLineSeries *const _naiveSeries = new QLineSeries();

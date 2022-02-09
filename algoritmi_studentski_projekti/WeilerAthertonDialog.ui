@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>WeilerAthertonDialog</class>
+ <widget class="QDialog" name="WeilerAthertonDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>370</width>
+    <height>330</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <widget class="QPushButton" name="dugme_odabir_poligona_1">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>9</y>
+     <width>126</width>
+     <height>34</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Odaberi poligon 1</string>
+   </property>
+  </widget>
+  <widget class="QTextBrowser" name="prikaz_imena_datoteke_1">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>49</y>
+     <width>351</width>
+     <height>71</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QTextBrowser" name="prikaz_imena_datoteke_2">
+   <property name="geometry">
+    <rect>
+     <x>9</x>
+     <y>163</y>
+     <width>351</width>
+     <height>71</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="dugme_odabir_poligona_2">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>123</y>
+     <width>126</width>
+     <height>34</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Odaberi poligon 2</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="dugme_potvrdi">
+   <property name="geometry">
+    <rect>
+     <x>100</x>
+     <y>261</y>
+     <width>131</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Potvrdi</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

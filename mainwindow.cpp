@@ -10,7 +10,9 @@ MainWindow::MainWindow(QWidget *parent)
       _pAlgoritamBaza(nullptr),
       _imeDatoteke(""),
       _duzinaPauze(DUZINA_PAUZE),
-      _brojSlucajnihObjekata(BROJ_SLUCAJNIH_OBJEKATA)
+      _brojSlucajnihObjekata(BROJ_SLUCAJNIH_OBJEKATA),
+      _imeDatotekePoligon_1(""),
+      _imeDatotekePoligon_2("")
 {
     ui->setupUi(this);
     ui->tipAlgoritma->insertSeparator(static_cast<int>(TipAlgoritma::SEPARATOR));
@@ -332,7 +334,8 @@ void MainWindow::napraviNoviAlgoritam()
 
     case TipAlgoritma::WEILER_ATHERTON:
         _pAlgoritamBaza = new WeilerAthertonPolygonClipping(_pOblastCrtanja, _duzinaPauze, _naivni,
-                                                            _imeDatoteke, _brojSlucajnihObjekata);
+                                                            _imeDatoteke, _brojSlucajnihObjekata,
+                                                            _imeDatotekePoligon_1, _imeDatotekePoligon_2);
         break;
 
 
@@ -358,3 +361,28 @@ void MainWindow::on_naivniCheck_stateChanged(int)
     _pOblastCrtanja->update();
     _pOblastCrtanjaOpenGL->update();
 }
+
+
+//-------------------------------------------------------------------------
+
+void MainWindow::setImenaDatotekaPoligona(std::string imeDatoteke1, std::string imeDatoteke2)
+{
+    _imeDatotekePoligon_1 = imeDatoteke1;
+    _imeDatotekePoligon_2 = imeDatoteke2;
+    //std::cout << imeDatoteke1 << " ----- " << imeDatoteke2 << std::endl;
+
+}
+
+void MainWindow::on_WeilerAtherton_dugme_clicked()
+{
+    WeilerAthertonDialog wad(this);
+    wad.setModal(true);
+    wad.exec();
+
+    napraviNoviAlgoritam();
+
+    ui->Zapocni_dugme->setEnabled(true);
+}
+
+
+
