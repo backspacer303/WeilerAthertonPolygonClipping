@@ -20,11 +20,8 @@ public:
     ~WeilerAthertonDialog();
 
 private slots:
-
     void on_dugme_odabir_poligona_1_clicked();
-
     void on_dugme_odabir_poligona_2_clicked();
-
     void on_dugme_potvrdi_clicked();
 
 private:

@@ -13,19 +13,6 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QPushButton" name="dugme_odabir_poligona_1">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>9</y>
-     <width>126</width>
-     <height>34</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Odaberi poligon 1</string>
-   </property>
-  </widget>
   <widget class="QTextBrowser" name="prikaz_imena_datoteke_1">
    <property name="geometry">
     <rect>
@@ -46,6 +33,19 @@
     </rect>
    </property>
   </widget>
+  <widget class="QPushButton" name="dugme_odabir_poligona_1">
+   <property name="geometry">
+    <rect>
+     <x>12</x>
+     <y>7</y>
+     <width>126</width>
+     <height>34</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Odaberi poligon 1</string>
+   </property>
+  </widget>
   <widget class="QPushButton" name="dugme_odabir_poligona_2">
    <property name="geometry">
     <rect>
@@ -62,8 +62,8 @@
   <widget class="QPushButton" name="dugme_potvrdi">
    <property name="geometry">
     <rect>
-     <x>100</x>
-     <y>261</y>
+     <x>115</x>
+     <y>255</y>
      <width>131</width>
      <height>51</height>
     </rect>

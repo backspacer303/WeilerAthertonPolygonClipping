@@ -19,6 +19,7 @@
 #include "./algoritmi_sa_vezbi/ga07_triangulation.h"
 
 #include <iostream>
+#include <QMessageBox>
 #include "./algoritmi_studentski_projekti/weiler_atherton_polygon_clipping.h"
 #include "./algoritmi_studentski_projekti/WeilerAthertonDialog.h"
 

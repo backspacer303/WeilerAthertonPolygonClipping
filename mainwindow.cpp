@@ -137,6 +137,8 @@ void MainWindow::on_Ponisti_dugme_clicked()
     ui->brojNasumicniTacaka->setPlaceholderText("Uneti broj nasumicnih tacaka, podrazumevana vrednost je 20.");
 
     _imeDatoteke = "";
+    _imeDatotekePoligon_1 = "";
+    _imeDatotekePoligon_2 = "";
     _optimalSeries->clear();
     _naiveSeries->clear();
 }
@@ -378,6 +380,11 @@ void MainWindow::on_WeilerAtherton_dugme_clicked()
     WeilerAthertonDialog wad(this);
     wad.setModal(true);
     wad.exec();
+
+    if(_imeDatotekePoligon_1 == "" || _imeDatotekePoligon_2 == ""){
+        QMessageBox::information(this, "Greska!", "Nisu odabrane datoteke!");
+        return;
+    }
 
     napraviNoviAlgoritam();
 
