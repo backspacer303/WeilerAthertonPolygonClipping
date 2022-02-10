@@ -18,6 +18,11 @@ PreseciDuzi::PreseciDuzi(QWidget *pCrtanje,
     _i = _j = _duzi.size();
 }
 
+//----------------------------------------------------------------------
+//modifikovano za potrebe algoritma WeilerAthertonPolygonClipping
+// - skavi poziv AlgoritamBaza_updateCanvasAndBlock() je zakomentarisan
+// - zakmentarisan je i "emit animacijaZavrsila();"
+//----------------------------------------------------------------------
 void PreseciDuzi::pokreniAlgoritam()
 {
     /* Slozenost ovakvog algoritma: O(nlogn + klogn).
@@ -33,7 +38,7 @@ void PreseciDuzi::pokreniAlgoritam()
 
         _brisucaPravaY = td.tacka.y();
         if (td.tip == tipDogadjaja::POCETAK_DUZI) {
-            AlgoritamBaza_updateCanvasAndBlock()
+            //AlgoritamBaza_updateCanvasAndBlock()
 
             auto trenutna = _redDuzi.emplace(td.duz1).first;
             if (trenutna != _redDuzi.begin()) {
@@ -52,7 +57,7 @@ void PreseciDuzi::pokreniAlgoritam()
             }
         }
         else if (td.tip == tipDogadjaja::KRAJ_DUZI) {
-            AlgoritamBaza_updateCanvasAndBlock()
+            //AlgoritamBaza_updateCanvasAndBlock()
 
             auto tr_duz = _redDuzi.find(td.duz1);
             if (tr_duz == _redDuzi.end()) continue;
@@ -70,7 +75,7 @@ void PreseciDuzi::pokreniAlgoritam()
          }
          else /*if (td.tip == tipDogadjaja::PRESEK)*/ {
             _preseci.push_back(td.tacka);
-            AlgoritamBaza_updateCanvasAndBlock()
+            //AlgoritamBaza_updateCanvasAndBlock()
 
             _redDuzi.erase(td.duz1);
             _redDuzi.erase(td.duz2);
@@ -112,9 +117,9 @@ void PreseciDuzi::pokreniAlgoritam()
 
     _redDuzi.clear();
     _brisucaPravaY = 3;
-    AlgoritamBaza_updateCanvasAndBlock()
+    //AlgoritamBaza_updateCanvasAndBlock()
 
-    emit animacijaZavrsila();
+    //emit animacijaZavrsila();
 }
 
 void PreseciDuzi::crtajAlgoritam(QPainter *painter) const
@@ -298,3 +303,20 @@ std::vector<QLineF> PreseciDuzi::ucitajPodatkeIzDatoteke(std::string imeDatoteke
 
     return duzi;
 }
+
+//----------------------------------------------------------
+//dodato za potrebe algoritma WeilerAthertonPolygonClipping
+//----------------------------------------------------------
+std::vector<QPointF> PreseciDuzi::GetVektorPreseka()
+{
+    return _preseci;
+}
+
+void PreseciDuzi::SetSkupDuzi(std::vector<QLineF> ulazneDuzi)
+{
+   _duzi.clear();
+   for(auto duz : ulazneDuzi)
+       _duzi.emplace_back(duz);
+}
+
+

@@ -22,6 +22,12 @@ public:
     void pokreniNaivniAlgoritam() final;
     void crtajNaivniAlgoritam(QPainter *painter) const final;
 
+    //----------------------------------------------------------
+    //dodato za potrebe algoritma WeilerAthertonPolygonClipping
+    //----------------------------------------------------------
+    void SetSkupDuzi(std::vector<QLineF> ulazneDuzi);
+    std::vector<QPointF> GetVektorPreseka();
+
 private:
     void naglasiTrenutnu(QPainter *painter, unsigned long i) const;
 

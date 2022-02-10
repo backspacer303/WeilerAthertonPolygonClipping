@@ -24,7 +24,8 @@ public:
 private:
     DCEL _poligon1;
     DCEL _poligon2;
-    DCEL _okvir;
+    PreseciDuzi _algoritamPreseci;
+    std::vector<QPointF> _preseci;
 };
 
 #endif // WEILERATHERTONPOLYGONCLIPPING_H

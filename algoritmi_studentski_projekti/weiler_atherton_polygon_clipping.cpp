@@ -9,9 +9,11 @@ WeilerAthertonPolygonClipping::WeilerAthertonPolygonClipping(QWidget *pCrtanje,
                                                              std::string imeDatotekePoligon_2)
     : AlgoritamBaza(pCrtanje, pauzaKoraka, naivni),
       _poligon1(imeDatotekePoligon_1, pCrtanje->height(), pCrtanje->width()),
-      _poligon2(imeDatotekePoligon_2, pCrtanje->height(), pCrtanje->width())
+      _poligon2(imeDatotekePoligon_2, pCrtanje->height(), pCrtanje->width()),
+      _algoritamPreseci(pCrtanje, pauzaKoraka, naivni, imeDatoteke, brojTacaka)
 {
     std::cout << imeDatotekePoligon_1 << "  *****  " <<imeDatotekePoligon_2 << std::endl;
+
 }
 
 void WeilerAthertonPolygonClipping::pokreniAlgoritam()
