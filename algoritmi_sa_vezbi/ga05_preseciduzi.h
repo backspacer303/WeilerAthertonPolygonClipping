@@ -2,7 +2,7 @@
 #define GA05_PRESECIDUZI_H
 
 #include <set>
-
+#include <iostream>
 #include "algoritambaza.h"
 #include "pomocnefunkcije.h"
 

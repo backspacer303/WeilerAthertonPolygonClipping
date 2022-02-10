@@ -25,6 +25,7 @@ private:
     DCEL _poligon1;
     DCEL _poligon2;
     PreseciDuzi _algoritamPreseci;
+    std::vector<QLineF> _zbirniSkupDuzi;
     std::vector<QPointF> _preseci;
 };
 

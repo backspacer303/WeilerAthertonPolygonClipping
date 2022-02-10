@@ -120,6 +120,9 @@ void PreseciDuzi::pokreniAlgoritam()
     //AlgoritamBaza_updateCanvasAndBlock()
 
     //emit animacijaZavrsila();
+
+    std::cout << "Preseci duzi, kraj algoritma, vektor preseka: " << _preseci.size() << std::endl;
+
 }
 
 void PreseciDuzi::crtajAlgoritam(QPainter *painter) const
@@ -184,11 +187,14 @@ void PreseciDuzi::pokreniNaivniAlgoritam()
                                             _duzi[_j],
                                             presek))
                 _naivniPreseci.push_back(presek);
-            AlgoritamBaza_updateCanvasAndBlock()
+            //AlgoritamBaza_updateCanvasAndBlock()
         }
     }
-    AlgoritamBaza_updateCanvasAndBlock()
-    emit animacijaZavrsila();
+    //AlgoritamBaza_updateCanvasAndBlock()
+    //emit animacijaZavrsila();
+
+    std::cout << "Preseci duzi, kraj NAIVNOG algoritma, vektor preseka: " << _naivniPreseci.size() << std::endl;
+
 }
 
 void PreseciDuzi::naglasiTrenutnu(QPainter *painter, unsigned long i) const
@@ -309,7 +315,7 @@ std::vector<QLineF> PreseciDuzi::ucitajPodatkeIzDatoteke(std::string imeDatoteke
 //----------------------------------------------------------
 std::vector<QPointF> PreseciDuzi::GetVektorPreseka()
 {
-    return _preseci;
+    return _naivniPreseci;
 }
 
 void PreseciDuzi::SetSkupDuzi(std::vector<QLineF> ulazneDuzi)
@@ -317,6 +323,8 @@ void PreseciDuzi::SetSkupDuzi(std::vector<QLineF> ulazneDuzi)
    _duzi.clear();
    for(auto duz : ulazneDuzi)
        _duzi.emplace_back(duz);
+
+   std::cout << "Preseci duzi, na kraju fje SetSkupDuzi: velicina lokalnog _dizu "<< _duzi.size() << std::endl;
 }
 
 
