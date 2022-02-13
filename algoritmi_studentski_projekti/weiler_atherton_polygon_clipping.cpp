@@ -31,41 +31,39 @@ WeilerAthertonPolygonClipping::WeilerAthertonPolygonClipping(QWidget *pCrtanje,
         std::cout << "p1: "<< l.p1().x() << ", " << l.p1().y() << "     p2: " << l.p2().x() << ", " << l.p2().y() << std::endl;
 
 
-    //QLineF l1(QPointF(699, 419), QPointF(699, 139));
-    //QLineF l2(QPointF(885, 349), QPointF(582, 349));
-    //_zbirniSkupDuzi.clear();
-    //_zbirniSkupDuzi.emplace_back(l1);
-    //_zbirniSkupDuzi.emplace_back(l2);
-    //std::cout << "Broj temena 1. poligona: " << _poligon1.vertices().size() << std::endl;
-    //std::cout << "Broj temena 2. poligona: " << _poligon2.vertices().size() << std::endl;
-
-
+    std::vector<QPointF> preseciSaTemenima;
     _algoritamPreseci.SetSkupDuzi(_zbirniSkupDuzi);
     _algoritamPreseci.pokreniNaivniAlgoritam();
-    _preseci = _algoritamPreseci.GetVektorPreseka();
-
-    //TODO filtrirati od temena koja su upala u preseke
+    preseciSaTemenima = _algoritamPreseci.GetVektorPreseka();
 
 
+    std::cout << "Broj preseciSaTemenima nakon algoritma za preseke: " << preseciSaTemenima.size() << std::endl;
 
 
-
-
-    /*
-    //Ako hocemo stvaran broj preseka obrisemo presecne tacke koje se pojavljuju vise puta
-    //svaka presecna tacka se pojavljuje tacno 4 puta, zbog twin ivica
-    //za dva osnovna ucitana poligoan (okvir, poligon1) naivni algoritam za nalazenje preseka vraca 52 presecne tacke
-    //kada eliminisemo duplikate ostaje 13 razlicitih presecnih tacaka: to su sva temana jednog i drugog poligona [4+5]
-    // (jer su ona presecne tacke za duzi stanice poligona koje se u njima spajaju) plus [4] stvarna preseka koja postoje
-
-    std::vector<std::pair<float, float>> tackeKaoParovi;
-    for(QPointF t : _preseci){
-        tackeKaoParovi.emplace_back(std::pair<float, float>(t.x(), t.y()));
+    std::vector<QPointF> temena1;
+    std::vector<QPointF> temena2;
+    for(Vertex* v : _poligon1.vertices()){
+        temena1.push_back(v->coordinates());
     }
-    sort( tackeKaoParovi.begin(), tackeKaoParovi.end() );
-    tackeKaoParovi.erase( unique( tackeKaoParovi.begin(), tackeKaoParovi.end() ), tackeKaoParovi.end() );
-    std::cout << "WA, _presicei, obrisani duplikati, broj elemenata: " << tackeKaoParovi.size() << std::endl;
-    */
+    for(Vertex* v : _poligon2.vertices()){
+        temena2.push_back(v->coordinates());
+    }
+
+    std::copy_if(preseciSaTemenima.begin(), preseciSaTemenima.end(), std::back_inserter(_preseci),
+    [temena1, temena2](QPointF t){
+
+        if ( (std::find(temena1.begin(), temena1.end(), t) == temena1.end()) &&
+             (std::find(temena2.begin(), temena2.end(), t) == temena2.end()) )
+        {
+            return true;
+        }else
+            return false;
+    });
+
+
+    std::cout << "Broj preseka nakon izbacivanja tremena: " << _preseci.size() << std::endl;
+
+
 }
 
 void WeilerAthertonPolygonClipping::pokreniAlgoritam()
@@ -141,7 +139,7 @@ void WeilerAthertonPolygonClipping::crtajAlgoritam(QPainter *painter) const
 
 
     curr_num = 0;
-    painter->setBrush(Qt::red);
+    painter->setBrush(Qt::blue);
     painter->setPen(Qt::white);
     for(auto tacka : _preseci)
     {
