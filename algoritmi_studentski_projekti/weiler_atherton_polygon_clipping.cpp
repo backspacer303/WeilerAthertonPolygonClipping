@@ -64,6 +64,8 @@ WeilerAthertonPolygonClipping::WeilerAthertonPolygonClipping(QWidget *pCrtanje,
     std::cout << "Broj preseka nakon izbacivanja tremena: " << _preseci.size() << std::endl;
 
 
+    //TODO izbaciti duplikate
+
 }
 
 void WeilerAthertonPolygonClipping::pokreniAlgoritam()
@@ -138,25 +140,39 @@ void WeilerAthertonPolygonClipping::pokreniAlgoritam()
     });
 
 
+    std::cout << "lista 1:" << std::endl;
     for(auto v : lista1)
         std::cout << v->x() << "  " << v->y() << std::endl;
 
-    /*
-    float P = povrsinaTrougla(maxTackaPoli1, lhs, rhs);
 
-    if(P<0)
-        return true;
+    std::sort(lista2.begin(), lista2.end(),
+    [&](Vertex* lhs, Vertex* rhs){
 
-    if(P==0){
+        if(lhs->x() == maxTackaPoli2->x() && lhs->y() == maxTackaPoli2->y())
+            return true;
+        if(rhs->x() == maxTackaPoli2->x() && rhs->y() == maxTackaPoli2->y())
+            return false;
 
-        if(lhs->x() == maxTackaPoli1->x() && rhs->x() == maxTackaPoli1->x()){
+        qreal P = povrsinaTrougla(maxTackaPoli2, lhs, rhs);
 
-            return distanceKvadratF(maxTackaPoli1, lhs)
-                    > distanceKvadratF(maxTackaPoli1, rhs);
-        }else
-            return distanceKvadratF(maxTackaPoli1, lhs)
-                    < distanceKvadratF(maxTackaPoli1, rhs);
-    }*/
+        if(P>0)
+            return true;
+        else if(P<0)
+            return false;
+        else if(P==0){
+            if(lhs->x() == maxTackaPoli2->x() && rhs->x() == maxTackaPoli2->x()){
+                return distanceKvadratF(maxTackaPoli2, lhs) < distanceKvadratF(maxTackaPoli2, rhs);
+            }else
+                return distanceKvadratF(maxTackaPoli2, lhs) > distanceKvadratF(maxTackaPoli2, rhs);
+        }
+    });
+
+    std::cout << "lista 2:" << std::endl;
+    for(auto v : lista2)
+        std::cout << v->x() << "  " << v->y() << std::endl;
+
+
+
 
 
 
