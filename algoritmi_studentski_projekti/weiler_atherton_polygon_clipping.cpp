@@ -14,38 +14,41 @@ WeilerAthertonPolygonClipping::WeilerAthertonPolygonClipping(QWidget *pCrtanje,
 {
 
     //TODO mozda ovi QLineF-ovi treba da se brisu jer su dinamicki alocirani sa "new"?
-    for(auto i=0ul; i<_poligon1.edges().size(); i++){
-        QLineF* l = new QLineF(_poligon1.edge(i)->origin()->coordinates(),
-                               _poligon1.edge(i)->next()->origin()->coordinates());
+    for(auto i=0ul; i<_poligon1.getStraniceBezBlizanaca().size(); i++){
+        QLineF* l = new QLineF(_poligon1.getStranica(i)->origin()->coordinates(),
+                               _poligon1.getStranica(i)->next()->origin()->coordinates());
         _zbirniSkupDuzi.emplace_back(*l);
     }
-    for(auto i=0ul; i<_poligon2.edges().size(); i++){
-        QLineF* l = new QLineF(_poligon2.edge(i)->origin()->coordinates(),
-                              _poligon2.edge(i)->next()->origin()->coordinates());
+    for(auto i=0ul; i<_poligon2.getStraniceBezBlizanaca().size(); i++){
+        QLineF* l = new QLineF(_poligon2.getStranica(i)->origin()->coordinates(),
+                              _poligon2.getStranica(i)->next()->origin()->coordinates());
         _zbirniSkupDuzi.emplace_back(*l);
     }
 
-    //TODO
-    //Potencijano resenje: proci kroz sva temena i pokupi ivice koej pocinju u svakom od njih
-    //ideja: svaka od ivica mora pocetei u tacno jednom od temena, pa cemo ih tako pokupiti sve
 
-
-
+    std::cout << "WA, broj stranica u _zbirniSkupDuzi: " << _zbirniSkupDuzi.size() << std::endl;
     for(QLineF l : _zbirniSkupDuzi)
         std::cout << "p1: "<< l.p1().x() << ", " << l.p1().y() << "     p2: " << l.p2().x() << ", " << l.p2().y() << std::endl;
+
 
     //QLineF l1(QPointF(699, 419), QPointF(699, 139));
     //QLineF l2(QPointF(885, 349), QPointF(582, 349));
     //_zbirniSkupDuzi.clear();
     //_zbirniSkupDuzi.emplace_back(l1);
     //_zbirniSkupDuzi.emplace_back(l2);
-
     //std::cout << "Broj temena 1. poligona: " << _poligon1.vertices().size() << std::endl;
     //std::cout << "Broj temena 2. poligona: " << _poligon2.vertices().size() << std::endl;
+
 
     _algoritamPreseci.SetSkupDuzi(_zbirniSkupDuzi);
     _algoritamPreseci.pokreniNaivniAlgoritam();
     _preseci = _algoritamPreseci.GetVektorPreseka();
+
+    //TODO filtrirati od temena koja su upala u preseke
+
+
+
+
 
 
     /*
@@ -54,6 +57,7 @@ WeilerAthertonPolygonClipping::WeilerAthertonPolygonClipping(QWidget *pCrtanje,
     //za dva osnovna ucitana poligoan (okvir, poligon1) naivni algoritam za nalazenje preseka vraca 52 presecne tacke
     //kada eliminisemo duplikate ostaje 13 razlicitih presecnih tacaka: to su sva temana jednog i drugog poligona [4+5]
     // (jer su ona presecne tacke za duzi stanice poligona koje se u njima spajaju) plus [4] stvarna preseka koja postoje
+
     std::vector<std::pair<float, float>> tackeKaoParovi;
     for(QPointF t : _preseci){
         tackeKaoParovi.emplace_back(std::pair<float, float>(t.x(), t.y()));

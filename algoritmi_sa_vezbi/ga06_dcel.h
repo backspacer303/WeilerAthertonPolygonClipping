@@ -40,10 +40,14 @@ public:
     void insertFiled(Field *f);
     HalfEdge *findEdge(Vertex *start, Vertex *end);
 
+    const std::vector<HalfEdge *> &getStraniceBezBlizanaca() const; //WA dodatni fja za vracanje polustranica bez blizanaca
+    HalfEdge *getStranica(size_t i) const;                          //WA dodatni fja za dohvatanje jedne polustranice
+
 private:
     std::vector<Vertex *> _vertices;
     std::vector<HalfEdge *> _edges;
     std::vector<Field *> _fields;
+    std::vector<HalfEdge *> _polustraniceBezBlizanaca;  //WA dodatni niz sa stranicama
 };
 
 ///

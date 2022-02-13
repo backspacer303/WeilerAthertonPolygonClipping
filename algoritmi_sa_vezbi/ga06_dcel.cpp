@@ -47,6 +47,7 @@ DCEL::DCEL(std::string imeDatoteke, int h, int w)
             HalfEdge *new_halfedge = new HalfEdge(_vertices[indeksTemena]);
             edges.push_back(new_halfedge);
             _edges.push_back(new_halfedge);
+            _polustraniceBezBlizanaca.push_back(new_halfedge);  //WA punjenje dodatnog niza sa stranicama bez blizanaca
             _vertices[indeksTemena]->setIncidentEdge(new_halfedge);
         }
         for(auto j = 0ul; j < broj_temena; j++){
@@ -135,7 +136,6 @@ const std::vector<HalfEdge *> &DCEL::edges() const
 {
     return _edges;
 }
-
 Field *DCEL::field(size_t i) const
 {
     return _fields[i];
@@ -239,6 +239,17 @@ HalfEdge *DCEL::findEdge(Vertex *start, Vertex *end)
 
     return nullptr;
 }
+
+const std::vector<HalfEdge *> &DCEL::getStraniceBezBlizanaca() const
+{
+    return _polustraniceBezBlizanaca;
+}
+
+HalfEdge *DCEL::getStranica(size_t i) const
+{
+    return _polustraniceBezBlizanaca[i];
+}
+
 /*
 ***********************************************************************
 *                             VERTEX                                  *
