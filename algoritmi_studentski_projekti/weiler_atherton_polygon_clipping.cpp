@@ -68,6 +68,99 @@ WeilerAthertonPolygonClipping::WeilerAthertonPolygonClipping(QWidget *pCrtanje,
 
 void WeilerAthertonPolygonClipping::pokreniAlgoritam()
 {
+
+    std::vector<Vertex*> lista1;
+    std::vector<Vertex*> lista2;
+
+    for(Vertex* v : _poligon1.vertices())
+        lista1.push_back(v);
+    for(Vertex* v : _poligon2.vertices())
+        lista2.push_back(v);
+
+    for(QPointF p : _preseci){
+        Vertex* v = new Vertex(p);
+        lista1.push_back(v);
+        lista2.push_back(v);
+    }
+
+    //pronalazenje tacke sa najvecom x-koordinatom ili, ako je vise takvih, sa najmanjom y-koodrinatom
+    Vertex* maxTackaPoli1 = lista1[0];
+    Vertex* maxTackaPoli2 = lista2[0];
+
+    for(int i = 1; i<lista1.size(); i++){
+        if(lista1[i]->x() > maxTackaPoli1->x() ||
+          (lista1[i]->x() == maxTackaPoli1->x() && lista1[i]->y() < maxTackaPoli1->y()) )
+            maxTackaPoli1 = lista1[i];
+    }
+
+    for(int i = 1; i<lista2.size(); i++){
+        if(lista2[i]->x() > maxTackaPoli2->x() ||
+          (lista2[i]->x() == maxTackaPoli2->x() && lista2[i]->y() < maxTackaPoli2->y()) )
+            maxTackaPoli2 = lista2[i];
+    }
+
+
+    //provera nadjenih max tacaka
+    std::cout << "poligon 1 - max tacka: " << maxTackaPoli1->x() << " " << maxTackaPoli1->y() << std::endl;
+    std::cout << "poligon 2 - max tacka: " << maxTackaPoli2->x() << " " << maxTackaPoli2->y() << std::endl;
+
+    //sortiranje prema uglu koji zaklapaju sa x osom
+
+    /*
+    Vertex v1(100, 10);
+    Vertex v2(100,60);
+    Vertex v3(150,34);
+    auto rez = povrsinaTrougla(&v1,&v2,&v3);
+    std::cout << "Rezultat povrsine trougla: " << rez << std::endl;
+    */
+
+
+    std::sort(lista1.begin(), lista1.end(),
+    [&](Vertex* lhs, Vertex* rhs){
+
+        if(lhs->x() == maxTackaPoli1->x() && lhs->y() == maxTackaPoli1->y())
+            return true;
+        if(rhs->x() == maxTackaPoli1->x() && rhs->y() == maxTackaPoli1->y())
+            return false;
+
+        qreal P = povrsinaTrougla(maxTackaPoli1, lhs, rhs);
+
+        if(P>0)
+            return true;
+        else if(P<0)
+            return false;
+        else if(P==0){
+            if(lhs->x() == maxTackaPoli1->x() && rhs->x() == maxTackaPoli1->x()){
+                return distanceKvadratF(maxTackaPoli1, lhs) < distanceKvadratF(maxTackaPoli1, rhs);
+            }else
+                return distanceKvadratF(maxTackaPoli1, lhs) > distanceKvadratF(maxTackaPoli1, rhs);
+        }
+    });
+
+
+    for(auto v : lista1)
+        std::cout << v->x() << "  " << v->y() << std::endl;
+
+    /*
+    float P = povrsinaTrougla(maxTackaPoli1, lhs, rhs);
+
+    if(P<0)
+        return true;
+
+    if(P==0){
+
+        if(lhs->x() == maxTackaPoli1->x() && rhs->x() == maxTackaPoli1->x()){
+
+            return distanceKvadratF(maxTackaPoli1, lhs)
+                    > distanceKvadratF(maxTackaPoli1, rhs);
+        }else
+            return distanceKvadratF(maxTackaPoli1, lhs)
+                    < distanceKvadratF(maxTackaPoli1, rhs);
+    }*/
+
+
+
+
     emit animacijaZavrsila();
 }
 
@@ -169,6 +262,16 @@ void WeilerAthertonPolygonClipping::pokreniNaivniAlgoritam()
 void WeilerAthertonPolygonClipping::crtajNaivniAlgoritam(QPainter *painter) const
 {
     if (!painter) return;
+}
+
+qreal WeilerAthertonPolygonClipping::povrsinaTrougla(Vertex* A, Vertex* B, Vertex* C)
+{
+    return (B->x() - A->x())*(C->y() - A->y()) - (C->x() - A->x())*(B->y() - A->y());
+}
+
+qreal WeilerAthertonPolygonClipping::distanceKvadratF(Vertex* A, Vertex* B)
+{
+    return (A->x() - B->x())*(A->x() - B->x()) + (A->y() - B->y())*(A->y() - B->y());
 }
 
 

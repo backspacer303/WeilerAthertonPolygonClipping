@@ -2,9 +2,11 @@
 #define WEILERATHERTONPOLYGONCLIPPING_H
 
 #include <iostream>
+#include <QPoint>
 #include "algoritambaza.h"
 #include "../algoritmi_sa_vezbi/ga06_dcel.h"
 #include "../algoritmi_sa_vezbi/ga05_preseciduzi.h"
+#include "pomocnefunkcije.h"
 
 class WeilerAthertonPolygonClipping : public AlgoritamBaza
 {
@@ -27,6 +29,10 @@ private:
     PreseciDuzi _algoritamPreseci;
     std::vector<QLineF> _zbirniSkupDuzi;
     std::vector<QPointF> _preseci;
+    std::vector<QLineF> _redOdsecenihIvica; //kako se ovaj red menja tako zovemo iscrtavanje
+
+    qreal povrsinaTrougla(Vertex* A, Vertex* B, Vertex* C);
+    qreal distanceKvadratF(Vertex* A, Vertex* B);
 };
 
 #endif // WEILERATHERTONPOLYGONCLIPPING_H

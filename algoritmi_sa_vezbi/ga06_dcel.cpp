@@ -250,6 +250,11 @@ HalfEdge *DCEL::getStranica(size_t i) const
     return _polustraniceBezBlizanaca[i];
 }
 
+void DCEL::ubaciTeme(Vertex *t)
+{
+    _vertices.push_back(t);
+}
+
 /*
 ***********************************************************************
 *                             VERTEX                                  *
@@ -295,6 +300,27 @@ HalfEdge *Vertex::incidentEdge() const
 void Vertex::setIncidentEdge(HalfEdge *incidentEdge)
 {
     _incidentEdge = incidentEdge;
+}
+
+void Vertex::setIndeksUPoligonu(int redniBrPoligona, int indeks)
+{
+    if(redniBrPoligona == 1)
+        _indeksUPoligonu1 = indeks;
+    else if(redniBrPoligona == 2)
+        _indeksUPoligonu2 = indeks;
+    else
+        return;
+}
+
+int Vertex::getIndeksUPoligonu(int redniBrPoligona)
+{
+    if(redniBrPoligona == 1)
+        return _indeksUPoligonu1;
+    else if(redniBrPoligona == 2)
+        return _indeksUPoligonu2;
+    else{
+        return -1;
+    }
 }
 /*
 ***********************************************************************

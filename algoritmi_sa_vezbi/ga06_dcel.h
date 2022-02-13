@@ -42,6 +42,7 @@ public:
 
     const std::vector<HalfEdge *> &getStraniceBezBlizanaca() const; //WA dodatni fja za vracanje polustranica bez blizanaca
     HalfEdge *getStranica(size_t i) const;                          //WA dodatni fja za dohvatanje jedne polustranice
+    void ubaciTeme(Vertex* t);
 
 private:
     std::vector<Vertex *> _vertices;
@@ -78,9 +79,17 @@ public:
     VertexType type() const { return _type; }
     void setType(VertexType type) { _type = type; }
 
+
+    void setIndeksUPoligonu(int redniBrPoligona, int indeks);  //WA fja postavlja indeks presecnog temena u odgovarajucem poligonu
+    int getIndeksUPoligonu(int redniBrPoligona);               //WA fja vraca indeks presecnog temena u odgovarajucem poligonu
+
 private:
     QPointF _coordinates;
     HalfEdge *_incidentEdge;
+
+
+    int _indeksUPoligonu1; //WA indeksi presecnih temena u prvom poligonu
+    int _indeksUPoligonu2; //WA indeks presecnog temena u drugom poligonu
 
 private:
     /* za triangulaciju ga07_triangulation */
