@@ -196,7 +196,10 @@ void WeilerAthertonPolygonClipping::pokreniAlgoritam()
 
 
 
-
+    for(int i =0; i<lista2.size()-1; i++){
+        _redOdsecenihIvica.emplace_back(QLineF(lista2[i]->x(), lista2[i]->y(),
+                                               lista2[i+1]->x(), lista2[i+1]->y()));
+    }
 
 
 
@@ -208,6 +211,7 @@ void WeilerAthertonPolygonClipping::crtajAlgoritam(QPainter *painter) const
     if (!painter) return;
 
     QPen pen = painter->pen();
+
     for(auto i=0ul; i<_poligon1.edges().size(); i++)
     {
         /* Crta se poligon */
@@ -270,6 +274,17 @@ void WeilerAthertonPolygonClipping::crtajAlgoritam(QPainter *painter) const
     }
 
 
+    for(QLineF l : _redOdsecenihIvica)
+    {
+        /* Crta se poligon */
+        pen.setColor(Qt::green);
+        painter->setPen(pen);
+        painter->drawLine(l);
+    }
+
+
+
+
     curr_num = 0;
     painter->setBrush(Qt::blue);
     painter->setPen(Qt::white);
@@ -289,7 +304,6 @@ void WeilerAthertonPolygonClipping::crtajAlgoritam(QPainter *painter) const
         /* Ponistavanje transformacija */
         painter->restore();
     }
-
 
 }
 
