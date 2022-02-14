@@ -33,6 +33,7 @@ private:
 
     qreal povrsinaTrougla(Vertex* A, Vertex* B, Vertex* C);
     qreal distanceKvadratF(Vertex* A, Vertex* B);
+    bool tackaPripadaPravoj(const QPointF& tacka, const QPointF& pocetak, const QPointF& kraj);
 };
 
 #endif // WEILERATHERTONPOLYGONCLIPPING_H
