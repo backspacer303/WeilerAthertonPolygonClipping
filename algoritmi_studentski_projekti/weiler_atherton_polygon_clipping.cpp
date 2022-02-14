@@ -12,7 +12,7 @@ WeilerAthertonPolygonClipping::WeilerAthertonPolygonClipping(QWidget *pCrtanje,
       _poligon2(imeDatotekePoligon_2, pCrtanje->height(), pCrtanje->width()),
       _algoritamPreseci(pCrtanje, pauzaKoraka, naivni, imeDatoteke, brojTacaka)
 {
-
+    //Pravi se zbirni skup duzi
     //TODO mozda ovi QLineF-ovi treba da se brisu jer su dinamicki alocirani sa "new"?
     for(auto i=0ul; i<_poligon1.getStraniceBezBlizanaca().size(); i++){
         QLineF* l = new QLineF(_poligon1.getStranica(i)->origin()->coordinates(),
@@ -31,25 +31,28 @@ WeilerAthertonPolygonClipping::WeilerAthertonPolygonClipping(QWidget *pCrtanje,
         std::cout << "p1: "<< l.p1().x() << ", " << l.p1().y() << "     p2: " << l.p2().x() << ", " << l.p2().y() << std::endl;
 
 
-    std::vector<QPointF> preseciSaTemenima;
+    //Pozivanje algoritma za preseke duzi
+    std::vector<QPointF> preseciSaTemenimaIDuplikatima;
     _algoritamPreseci.SetSkupDuzi(_zbirniSkupDuzi);
     _algoritamPreseci.pokreniNaivniAlgoritam();
-    preseciSaTemenima = _algoritamPreseci.GetVektorPreseka();
+    preseciSaTemenimaIDuplikatima = _algoritamPreseci.GetVektorPreseka();
 
 
-    std::cout << "Broj preseciSaTemenima nakon algoritma za preseke: " << preseciSaTemenima.size() << std::endl;
+    std::cout << "Broj preseciSaTemenimaIDuplikatima nakon algoritma za preseke: " << preseciSaTemenimaIDuplikatima.size() << std::endl;
 
-
+    //Izbacivanje svih preseka koji su temena
     std::vector<QPointF> temena1;
     std::vector<QPointF> temena2;
     for(Vertex* v : _poligon1.vertices()){
-        temena1.push_back(v->coordinates());
+        temena1.emplace_back(v->coordinates());
     }
     for(Vertex* v : _poligon2.vertices()){
-        temena2.push_back(v->coordinates());
+        temena2.emplace_back(v->coordinates());
     }
 
-    std::copy_if(preseciSaTemenima.begin(), preseciSaTemenima.end(), std::back_inserter(_preseci),
+    std::vector<QPointF> preseciSaDuplikatima;
+
+    std::copy_if(preseciSaTemenimaIDuplikatima.begin(), preseciSaTemenimaIDuplikatima.end(), std::back_inserter(preseciSaDuplikatima),
     [temena1, temena2](QPointF t){
 
         if ( (std::find(temena1.begin(), temena1.end(), t) == temena1.end()) &&
@@ -61,10 +64,25 @@ WeilerAthertonPolygonClipping::WeilerAthertonPolygonClipping(QWidget *pCrtanje,
     });
 
 
-    std::cout << "Broj preseka nakon izbacivanja tremena: " << _preseci.size() << std::endl;
+    std::cout << "Broj preseciSaDuplikatima nakon izbacivanja temena: " << preseciSaDuplikatima.size() << std::endl;
 
 
-    //TODO izbaciti duplikate
+    //Izbacivanje svih duplikata preseka (oni koji su prijavljeni vise puta)
+    //(npr. preseci koji se nalaze na susednim ivicama dva lica ce biti prijavljeni dva puta)
+    std::vector<std::pair<float, float>> preseciSaDuplikatima_parovi;
+    for(QPointF p : preseciSaDuplikatima){
+        preseciSaDuplikatima_parovi.emplace_back(std::pair<float, float>(p.x(), p.y()));
+    }
+    std::sort(preseciSaDuplikatima_parovi.begin(), preseciSaDuplikatima_parovi.end());
+    preseciSaDuplikatima_parovi.erase( unique( preseciSaDuplikatima_parovi.begin(), preseciSaDuplikatima_parovi.end() ),
+                                       preseciSaDuplikatima_parovi.end() );
+
+    std::cout << "Broj preseka nakon izbacivanja temeta i duplikata: " << preseciSaDuplikatima_parovi.size() << std::endl;
+
+
+    //Konvertovanje parova koordinata nazad u QPointF i upisivanje u lokalni vektor preseka
+    for(std::pair<float, float> p : preseciSaDuplikatima_parovi)
+        _preseci.emplace_back(QPointF(p.first, p.second));
 
 }
 
@@ -75,17 +93,17 @@ void WeilerAthertonPolygonClipping::pokreniAlgoritam()
     std::vector<Vertex*> lista2;
 
     for(Vertex* v : _poligon1.vertices())
-        lista1.push_back(v);
+        lista1.emplace_back(v);
     for(Vertex* v : _poligon2.vertices())
-        lista2.push_back(v);
+        lista2.emplace_back(v);
 
     for(QPointF p : _preseci){
         Vertex* v = new Vertex(p);
-        lista1.push_back(v);
-        lista2.push_back(v);
+        lista1.emplace_back(v);
+        lista2.emplace_back(v);
     }
 
-    //pronalazenje tacke sa najvecom x-koordinatom ili, ako je vise takvih, sa najmanjom y-koodrinatom
+    //Pronalazenje tacke sa najvecom x-koordinatom ili, ako je vise takvih, sa najmanjom y-koodrinatom
     Vertex* maxTackaPoli1 = lista1[0];
     Vertex* maxTackaPoli2 = lista2[0];
 
@@ -106,9 +124,9 @@ void WeilerAthertonPolygonClipping::pokreniAlgoritam()
     std::cout << "poligon 1 - max tacka: " << maxTackaPoli1->x() << " " << maxTackaPoli1->y() << std::endl;
     std::cout << "poligon 2 - max tacka: " << maxTackaPoli2->x() << " " << maxTackaPoli2->y() << std::endl;
 
-    //sortiranje prema uglu koji zaklapaju sa x osom
 
     /*
+    //testiranje fje povrsinaTrougla
     Vertex v1(100, 10);
     Vertex v2(100,60);
     Vertex v3(150,34);
@@ -116,6 +134,8 @@ void WeilerAthertonPolygonClipping::pokreniAlgoritam()
     std::cout << "Rezultat povrsine trougla: " << rez << std::endl;
     */
 
+
+    //Sortiranje prve liste temena prema uglu koji zaklapaju sa x-osom
 
     std::sort(lista1.begin(), lista1.end(),
     [&](Vertex* lhs, Vertex* rhs){
@@ -145,6 +165,8 @@ void WeilerAthertonPolygonClipping::pokreniAlgoritam()
         std::cout << v->x() << "  " << v->y() << std::endl;
 
 
+    //Sortiranje druge liste temena prema uglu koji zaklapaju sa x-osom
+
     std::sort(lista2.begin(), lista2.end(),
     [&](Vertex* lhs, Vertex* rhs){
 
@@ -166,6 +188,7 @@ void WeilerAthertonPolygonClipping::pokreniAlgoritam()
                 return distanceKvadratF(maxTackaPoli2, lhs) > distanceKvadratF(maxTackaPoli2, rhs);
         }
     });
+
 
     std::cout << "lista 2:" << std::endl;
     for(auto v : lista2)
