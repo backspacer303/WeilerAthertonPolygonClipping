@@ -88,13 +88,67 @@ WeilerAthertonPolygonClipping::WeilerAthertonPolygonClipping(QWidget *pCrtanje,
 
 void WeilerAthertonPolygonClipping::pokreniAlgoritam()
 {
+
+    std::cout << "-----------------------------------------------------------" << std::endl;
+
     /*
-    QPointF pocetak(100,10.25);
-    QPointF kraj(150.15,10.25);
-    QPointF tacka(120.36, 10.25);
-    auto rez = tackaPripadaPravoj(tacka, pocetak, kraj);
-    std::cout << "Da li je tacka na liniji: " << rez << std::endl;
+    for(QPointF p : _preseci){
+
+        bool pripada = false;
+
+        for(Field* polje : _poligon2.fields()){
+
+
+            HalfEdge* pocetnaIvica = polje->outerComponent();
+
+            if(pocetnaIvica == nullptr)
+                continue;
+
+            pripada = tackaPripadaPravoj(p, pocetnaIvica->origin()->coordinates(),
+                                                 pocetnaIvica->next()->origin()->coordinates());
+            if(pripada){
+
+                std::cout << "Presecna tacka p(" << p.x() << ", " << p.y()
+                          << ") pripada ivici pocetak("
+                          << pocetnaIvica->origin()->coordinates().x() << ", " << pocetnaIvica->origin()->coordinates().y()
+                          << ")   kraj("
+                          << pocetnaIvica->next()->origin()->coordinates().x() << ", "
+                          << pocetnaIvica->next()->origin()->coordinates().y()
+                          << ")" << std::endl;
+
+                break;
+            }
+
+
+            HalfEdge* trenutnaIvica = pocetnaIvica->next();
+
+            while(trenutnaIvica != pocetnaIvica){
+
+                pripada = tackaPripadaPravoj(p, trenutnaIvica->origin()->coordinates(),
+                                                trenutnaIvica->next()->origin()->coordinates());
+
+                if(pripada){
+
+                    std::cout << "Presecna tacka p(" << p.x() << ", " << p.y()
+                              << ") pripada ivici pocetak("
+                              << trenutnaIvica->origin()->coordinates().x() << ", " << trenutnaIvica->origin()->coordinates().y()
+                              << ")   kraj("
+                              << trenutnaIvica->next()->origin()->coordinates().x() << ", "
+                              << trenutnaIvica->next()->origin()->coordinates().y()
+                              << ")" << std::endl;
+                    break;
+                }
+
+                trenutnaIvica = trenutnaIvica->next();
+            }
+
+        }
+
+        if(!pripada)
+            std::cout << "Tacka p(" << p.x() << ", " << p.y() << ") ne pripada ni jednoj ivici" << std::endl;
+    }
     */
+
 
 
     for(QPointF p : _preseci){
@@ -208,6 +262,8 @@ void WeilerAthertonPolygonClipping::pokreniAlgoritam()
 
         }
     }
+
+
 
 
 
@@ -376,7 +432,24 @@ qreal WeilerAthertonPolygonClipping::distanceKvadratF(Vertex* A, Vertex* B)
 
 bool WeilerAthertonPolygonClipping::tackaPripadaPravoj(const QPointF &tacka, const QPointF &pocetak, const QPointF &kraj)
 {
-    return (tacka.y()-pocetak.y()) == (kraj.y() - pocetak.y())/(kraj.x() - pocetak.x())*(tacka.x() - pocetak.x());
+
+    qreal k = (kraj.x() - pocetak.x());
+
+    QLineF prava(pocetak.x(), pocetak.y(), kraj.x(), kraj.y());
+
+    auto diff = (tacka.y()-pocetak.y()) -
+                (kraj.y() - pocetak.y())/(kraj.x() - pocetak.x())*(tacka.x() - pocetak.x())
+                 ;
+    /*
+    std::cout << "Diff: " << diff << "k: "<< k << "  "
+              << "-> pocetka(" << pocetak.x() << ", " << pocetak.y() << ") kraj("
+              << kraj.x() << ", " << kraj.y() << ")" << std::endl;
+    */
+
+
+    return fabsf(diff) < EPSf;
+
+
 }
 
 

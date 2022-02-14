@@ -2,11 +2,13 @@
 #define WEILERATHERTONPOLYGONCLIPPING_H
 
 #include <iostream>
+#include <cmath>
 #include <QPoint>
 #include "algoritambaza.h"
 #include "../algoritmi_sa_vezbi/ga06_dcel.h"
 #include "../algoritmi_sa_vezbi/ga05_preseciduzi.h"
 #include "pomocnefunkcije.h"
+
 
 class WeilerAthertonPolygonClipping : public AlgoritamBaza
 {
