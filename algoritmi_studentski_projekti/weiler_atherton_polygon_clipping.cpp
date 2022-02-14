@@ -89,6 +89,39 @@ WeilerAthertonPolygonClipping::WeilerAthertonPolygonClipping(QWidget *pCrtanje,
 void WeilerAthertonPolygonClipping::pokreniAlgoritam()
 {
 
+    updateCanvasAndBlock();
+
+    for(int i=0; i<_poligon2.fields().size(); i++){
+
+        HalfEdge* pocetnaIvica = _poligon2.field(i)->outerComponent();
+
+        //Spoljasnje neograniceno lice preskacemo
+        if(pocetnaIvica == nullptr)
+            continue;
+
+        Vertex* pocetniOrigin = pocetnaIvica->origin();
+
+        _redOdsecenihIvica.emplace_back(QLineF(pocetniOrigin->x(), pocetniOrigin->y(),
+                                               pocetnaIvica->next()->origin()->x(), pocetnaIvica->next()->origin()->y()
+                                              ));
+        updateCanvasAndBlock();
+
+        HalfEdge* trenutnaIvica = pocetnaIvica->next();
+        Vertex* trenutniOrigin = trenutnaIvica->origin();
+
+        //Obilazimo ivice koje ogranicavaju lice dokle god ponovo ne dostignemo pocetnu
+        while(  trenutniOrigin->x() != pocetniOrigin->x() ||
+               (trenutniOrigin->x() == pocetniOrigin->x() && trenutniOrigin->y() != pocetniOrigin->y())
+             )
+        {
+            _redOdsecenihIvica.emplace_back(QLineF(trenutniOrigin->x(), trenutniOrigin->y(),
+                                                   trenutnaIvica->next()->origin()->x(), trenutnaIvica->next()->origin()->y()
+                                                   ));
+            updateCanvasAndBlock();
+            trenutnaIvica = trenutnaIvica->next();
+            trenutniOrigin = trenutnaIvica->origin();
+        }
+    }
 
 
 
