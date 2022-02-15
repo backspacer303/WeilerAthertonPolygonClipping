@@ -158,10 +158,12 @@ void WeilerAthertonPolygonClipping::pokreniAlgoritam()
         QPointF p = _preseci[i];
 
 
-        for(int i=0; i<_poligon2.fields().size(); i++){
+        for(int j=0; j<_poligon2.fields().size(); j++){
 
+            if(_stanjaPreseka[i] == StanjePreseka::OBRADJEN)
+                continue;
 
-            HalfEdge* pocetnaIvica = _poligon2.field(i)->outerComponent();
+            HalfEdge* pocetnaIvica = _poligon2.field(j)->outerComponent();
 
             if(pocetnaIvica == nullptr)
                 continue;
@@ -190,7 +192,7 @@ void WeilerAthertonPolygonClipping::pokreniAlgoritam()
                 HalfEdge* novaIvicaTwin = new HalfEdge(sledecaStareIvice->origin());
                 _poligon2.insertEdge(novaIvica);
                 _poligon2.insertEdge(novaIvicaTwin);
-                novaIvica->setIncidentFace(_poligon2.field(i));
+                novaIvica->setIncidentFace(_poligon2.field(j));
                 novaIvica->setTwin(novaIvicaTwin);
                 novaIvicaTwin->setTwin(novaIvica);
 
@@ -207,6 +209,9 @@ void WeilerAthertonPolygonClipping::pokreniAlgoritam()
                 //5)
                 sledecaStareIvice->setPrev(novaIvica);
                 sledecaStareIvice->twin()->setNext(novaIvicaTwin);
+
+                _stanjaPreseka[i] = StanjePreseka::OBRADJEN;
+
 
                 continue;
             }
@@ -239,7 +244,7 @@ void WeilerAthertonPolygonClipping::pokreniAlgoritam()
                     HalfEdge* novaIvicaTwin = new HalfEdge(sledecaStareIvice->origin());
                     _poligon2.insertEdge(novaIvica);
                     _poligon2.insertEdge(novaIvicaTwin);
-                    novaIvica->setIncidentFace(_poligon2.field(i));
+                    novaIvica->setIncidentFace(_poligon2.field(j));
                     novaIvica->setTwin(novaIvicaTwin);
                     novaIvicaTwin->setTwin(novaIvica);
 
@@ -256,6 +261,8 @@ void WeilerAthertonPolygonClipping::pokreniAlgoritam()
                     //5)
                     sledecaStareIvice->setPrev(novaIvica);
                     sledecaStareIvice->twin()->setNext(novaIvicaTwin);
+
+                    _stanjaPreseka[i] = StanjePreseka::OBRADJEN;
 
                     break;
                 }
