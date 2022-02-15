@@ -21,7 +21,7 @@
 #define DUZINA_PAUZE             (500)
 
 /* Ne prevelika tolerancija na numericku gresku */
-#define EPS                      (1e-6)
-#define EPSf                     (5e-5f)
+#define EPS                      (1e-1)
+#define EPSf                     (1e-1f)
 
 #endif // CONFIG_H
