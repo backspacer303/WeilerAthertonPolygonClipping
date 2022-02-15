@@ -31,11 +31,14 @@ private:
     PreseciDuzi _algoritamPreseci;
     std::vector<QLineF> _zbirniSkupDuzi;
     std::vector<QPointF> _preseci;
+    HalfEdge* _pocetnaIvica;
     std::vector<QLineF> _redOdsecenihIvica; //kako se ovaj red menja tako zovemo iscrtavanje
 
     void ubaciPresekeUPoligone();
     void podebljajPoligonPoIvicama(DCEL& poligon);
     bool tackaPripadaDuzi(const QPointF& tacka, const QPointF& pocetak, const QPointF& kraj);
+    HalfEdge* pronadjiPocetnuIvicu();
+    bool proveriPripadnostOkviru(QPointF teme);
 
 };
 

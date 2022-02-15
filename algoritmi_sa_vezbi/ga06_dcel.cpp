@@ -296,15 +296,15 @@ void DCEL::ubaciIvicu(HalfEdge *e)
 ***********************************************************************
 */
 Vertex::Vertex()
-    : _incidentEdge{nullptr}
+    : _incidentEdge{nullptr}, _temeJePresecno(false)
 {}
 
 Vertex::Vertex(float x, float y)
-    : _coordinates{static_cast<qreal>(x), static_cast<qreal>(y)}
+    : _coordinates{static_cast<qreal>(x), static_cast<qreal>(y)}, _temeJePresecno(false)
 {}
 
 Vertex::Vertex(const QPointF &coordinates, HalfEdge *incidentEdge)
-    : _coordinates{coordinates}, _incidentEdge{incidentEdge}
+    : _coordinates{coordinates}, _incidentEdge{incidentEdge}, _temeJePresecno(false)
 {}
 
 qreal Vertex::x() const
@@ -343,26 +343,28 @@ void Vertex::setIncidentEdge(HalfEdge *incidentEdge)
 //      (vidi ga06_dcel.h)
 //---------------------------------------
 
-void Vertex::setIndeksUPoligonu(int redniBrPoligona, int indeks)
+void Vertex::setTemeJePresecno(bool a)
 {
-    if(redniBrPoligona == 1)
-        _indeksUPoligonu1 = indeks;
-    else if(redniBrPoligona == 2)
-        _indeksUPoligonu2 = indeks;
-    else
-        return;
+    _temeJePresecno = a;
 }
 
-int Vertex::getIndeksUPoligonu(int redniBrPoligona)
+bool Vertex::getTemeJePresecno()
 {
-    if(redniBrPoligona == 1)
-        return _indeksUPoligonu1;
-    else if(redniBrPoligona == 2)
-        return _indeksUPoligonu2;
-    else{
-        return -1;
-    }
+    return _temeJePresecno;
 }
+
+void Vertex::setVezaZaDrugiPoligon(Vertex *v)
+{
+    _vezaZaDrugiPoligon = v;
+}
+
+Vertex *Vertex::getVezaZaDrugiPoligon()
+{
+    return _vezaZaDrugiPoligon;
+}
+
+
+
 /*
 ***********************************************************************
 *                           HALFEDGE                                 *

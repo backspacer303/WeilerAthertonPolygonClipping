@@ -1,4 +1,4 @@
-#ifndef DCEL_H
+﻿#ifndef DCEL_H
 #define DCEL_H
 
 #include <QPoint>
@@ -81,16 +81,19 @@ public:
     void setType(VertexType type) { _type = type; }
 
 
-    void setIndeksUPoligonu(int redniBrPoligona, int indeks);  //WA fja postavlja indeks presecnog temena u odgovarajucem poligonu
-    int getIndeksUPoligonu(int redniBrPoligona);               //WA fja vraca indeks presecnog temena u odgovarajucem poligonu
+    //WA odgovarajuce fje za postavljenje i dohvatanje pomocnih vrednost
+    void setTemeJePresecno(bool a);
+    bool getTemeJePresecno();
+    void setVezaZaDrugiPoligon(Vertex* v);
+    Vertex *getVezaZaDrugiPoligon();
 
 private:
+
+    bool _temeJePresecno;         //WA zastavica koja oznacava da li je teme presecno za dva poligona
+    Vertex* _vezaZaDrugiPoligon;  //WA veza za objekat koji predstavlja isto to presecno teme ali u drugom poligonu
+
     QPointF _coordinates;
     HalfEdge *_incidentEdge;
-
-
-    int _indeksUPoligonu1; //WA indeksi presecnih temena u prvom poligonu
-    int _indeksUPoligonu2; //WA indeks presecnog temena u drugom poligonu
 
 private:
     /* za triangulaciju ga07_triangulation */
