@@ -157,6 +157,7 @@ void WeilerAthertonPolygonClipping::pokreniAlgoritam()
 
         QPointF p = _preseci[i];
 
+        std::cout << "p(" << p.x() << ", " << p.y() << ")" <<std::endl;
 
         for(int j=0; j<_poligon2.fields().size(); j++){
 
@@ -165,8 +166,8 @@ void WeilerAthertonPolygonClipping::pokreniAlgoritam()
 
             HalfEdge* pocetnaIvica = _poligon2.field(j)->outerComponent();
 
-            if(pocetnaIvica == nullptr)
-                continue;
+            //if(pocetnaIvica == nullptr)
+                //continue;
 
 
 
@@ -185,30 +186,30 @@ void WeilerAthertonPolygonClipping::pokreniAlgoritam()
 
                 //1)
                 HalfEdge* sledecaStareIvice = pocetnaIvica->next();
-                pocetnaIvica->twin()->setOrigin(v);
+                //pocetnaIvica->twin()->setOrigin(v);
 
                 //2)
                 HalfEdge* novaIvica = new HalfEdge(v);
-                HalfEdge* novaIvicaTwin = new HalfEdge(sledecaStareIvice->origin());
-                _poligon2.insertEdge(novaIvica);
-                _poligon2.insertEdge(novaIvicaTwin);
+                //HalfEdge* novaIvicaTwin = new HalfEdge(sledecaStareIvice->origin());
+                _poligon2.ubaciIvicu(novaIvica);
+                //_poligon2.insertEdge(novaIvicaTwin);
                 novaIvica->setIncidentFace(_poligon2.field(j));
-                novaIvica->setTwin(novaIvicaTwin);
-                novaIvicaTwin->setTwin(novaIvica);
+                //novaIvica->setTwin(novaIvicaTwin);
+                //novaIvicaTwin->setTwin(novaIvica);
 
                 //3)
                 pocetnaIvica->setNext(novaIvica);
-                pocetnaIvica->twin()->setPrev(novaIvicaTwin);
+                //pocetnaIvica->twin()->setPrev(novaIvicaTwin);
 
                 //4)
                 novaIvica->setNext(sledecaStareIvice);
                 novaIvica->setPrev(pocetnaIvica);
-                novaIvicaTwin->setNext(pocetnaIvica->twin());
-                novaIvicaTwin->setPrev(sledecaStareIvice);
+                //novaIvicaTwin->setNext(pocetnaIvica->twin());
+                //novaIvicaTwin->setPrev(sledecaStareIvice);
 
                 //5)
                 sledecaStareIvice->setPrev(novaIvica);
-                sledecaStareIvice->twin()->setNext(novaIvicaTwin);
+                //sledecaStareIvice->twin()->setNext(novaIvicaTwin);
 
                 _stanjaPreseka[i] = StanjePreseka::OBRADJEN;
 
@@ -237,30 +238,30 @@ void WeilerAthertonPolygonClipping::pokreniAlgoritam()
 
                     //1)
                     HalfEdge* sledecaStareIvice = trenutnaIvica->next();
-                    trenutnaIvica->twin()->setOrigin(v);
+                    //trenutnaIvica->twin()->setOrigin(v);
 
                     //2)
                     HalfEdge* novaIvica = new HalfEdge(v);
-                    HalfEdge* novaIvicaTwin = new HalfEdge(sledecaStareIvice->origin());
-                    _poligon2.insertEdge(novaIvica);
-                    _poligon2.insertEdge(novaIvicaTwin);
+                    //HalfEdge* novaIvicaTwin = new HalfEdge(sledecaStareIvice->origin());
+                    _poligon2.ubaciIvicu(novaIvica);
+                    //_poligon2.insertEdge(novaIvicaTwin);
                     novaIvica->setIncidentFace(_poligon2.field(j));
-                    novaIvica->setTwin(novaIvicaTwin);
-                    novaIvicaTwin->setTwin(novaIvica);
+                    //novaIvica->setTwin(novaIvicaTwin);
+                    //novaIvicaTwin->setTwin(novaIvica);
 
                     //3)
                     trenutnaIvica->setNext(novaIvica);
-                    trenutnaIvica->twin()->setPrev(novaIvicaTwin);
+                    //trenutnaIvica->twin()->setPrev(novaIvicaTwin);
 
                     //4)
                     novaIvica->setNext(sledecaStareIvice);
                     novaIvica->setPrev(trenutnaIvica);
-                    novaIvicaTwin->setNext(trenutnaIvica->twin());
-                    novaIvicaTwin->setPrev(sledecaStareIvice);
+                    //novaIvicaTwin->setNext(trenutnaIvica->twin());
+                    //novaIvicaTwin->setPrev(sledecaStareIvice);
 
                     //5)
                     sledecaStareIvice->setPrev(novaIvica);
-                    sledecaStareIvice->twin()->setNext(novaIvicaTwin);
+                    //sledecaStareIvice->twin()->setNext(novaIvicaTwin);
 
                     _stanjaPreseka[i] = StanjePreseka::OBRADJEN;
 
@@ -284,36 +285,47 @@ void WeilerAthertonPolygonClipping::pokreniAlgoritam()
 
     updateCanvasAndBlock();
 
+    int brojIvica = 0;
+
     for(int i=0; i<_poligon2.fields().size(); i++){
+
+        brojIvica = 0;
 
         HalfEdge* pocetnaIvica = _poligon2.field(i)->outerComponent();
 
         //Spoljasnje neograniceno lice preskacemo
-        if(pocetnaIvica == nullptr)
-            continue;
+        //if(pocetnaIvica == nullptr)
+            //continue;
 
         Vertex* pocetniOrigin = pocetnaIvica->origin();
 
         _redOdsecenihIvica.emplace_back(QLineF(pocetniOrigin->x(), pocetniOrigin->y(),
                                                pocetnaIvica->next()->origin()->x(), pocetnaIvica->next()->origin()->y()
                                               ));
+
+        brojIvica++;
+
         updateCanvasAndBlock();
 
         HalfEdge* trenutnaIvica = pocetnaIvica->next();
         Vertex* trenutniOrigin = trenutnaIvica->origin();
 
+
+
+
         //Obilazimo ivice koje ogranicavaju lice dokle god ponovo ne dostignemo pocetnu
-        while(  trenutniOrigin->x() != pocetniOrigin->x() ||
-               (trenutniOrigin->x() == pocetniOrigin->x() && trenutniOrigin->y() != pocetniOrigin->y())
-             )
+        while(  trenutnaIvica != pocetnaIvica )
         {
             _redOdsecenihIvica.emplace_back(QLineF(trenutniOrigin->x(), trenutniOrigin->y(),
                                                    trenutnaIvica->next()->origin()->x(), trenutnaIvica->next()->origin()->y()
                                                    ));
+            brojIvica++;
+
             updateCanvasAndBlock();
             trenutnaIvica = trenutnaIvica->next();
             trenutniOrigin = trenutnaIvica->origin();
         }
+        std::cout << "Broj ivica za lice " << i << " je " << brojIvica << std::endl;
     }
 
 
@@ -328,13 +340,13 @@ void WeilerAthertonPolygonClipping::crtajAlgoritam(QPainter *painter) const
 
     QPen pen = painter->pen();
 
-    for(auto i=0ul; i<_poligon1.edges().size(); i++)
+    for(auto i=0ul; i<_poligon1.getStraniceBezBlizanaca().size(); i++)
     {
         /* Crta se poligon */
         pen.setColor(Qt::red);
         painter->setPen(pen);
-        painter->drawLine(_poligon1.edge(i)->origin()->coordinates(),
-                          _poligon1.edge(i)->next()->origin()->coordinates());
+        painter->drawLine(_poligon1.getStranica(i)->origin()->coordinates(),
+                          _poligon1.getStranica(i)->next()->origin()->coordinates());
     }
 
     int curr_num = 0;
@@ -359,13 +371,13 @@ void WeilerAthertonPolygonClipping::crtajAlgoritam(QPainter *painter) const
     }
 
 
-    for(auto i=0ul; i<_poligon2.edges().size(); i++)
+    for(auto i=0ul; i<_poligon2.getStraniceBezBlizanaca().size(); i++)
     {
         /* Crta se poligon */
         pen.setColor(Qt::yellow);
         painter->setPen(pen);
-        painter->drawLine(_poligon2.edge(i)->origin()->coordinates(),
-                         _poligon2.edge(i)->next()->origin()->coordinates());
+        painter->drawLine(_poligon2.getStranica(i)->origin()->coordinates(),
+                         _poligon2.getStranica(i)->next()->origin()->coordinates());
     }
 
     curr_num = 0;

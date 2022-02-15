@@ -42,7 +42,8 @@ public:
 
     const std::vector<HalfEdge *> &getStraniceBezBlizanaca() const; //WA dodatni fja za vracanje polustranica bez blizanaca
     HalfEdge *getStranica(size_t i) const;                          //WA dodatni fja za dohvatanje jedne polustranice
-    void ubaciTeme(Vertex* t);
+    void ubaciTeme(Vertex* t);                                      //WA dodatni fja za dodavanje temena
+    void ubaciIvicu(HalfEdge* e);                                   //WA dodatni fja za dodavanje polustranica bez blizanaca
 
 private:
     std::vector<Vertex *> _vertices;

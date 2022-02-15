@@ -41,33 +41,51 @@ DCEL::DCEL(std::string imeDatoteke, int h, int w)
         unsigned broj_temena;
         in >> broj_temena;
         std::vector<HalfEdge*> edges;
+        std::vector<HalfEdge*> edges_WA; //WA
         for(auto j = 0ul; j < broj_temena; ++j){
             unsigned indeksTemena;
             in >> indeksTemena;
             HalfEdge *new_halfedge = new HalfEdge(_vertices[indeksTemena]);
+            HalfEdge *new_halfedge_WA = new HalfEdge(_vertices[indeksTemena]); //WA
             edges.push_back(new_halfedge);
+            edges_WA.push_back(new_halfedge_WA); //WA
             _edges.push_back(new_halfedge);
-            _polustraniceBezBlizanaca.push_back(new_halfedge);  //WA punjenje dodatnog niza sa stranicama bez blizanaca
-            _vertices[indeksTemena]->setIncidentEdge(new_halfedge);
+            _polustraniceBezBlizanaca.push_back(new_halfedge_WA);  //WA
+            _vertices[indeksTemena]->setIncidentEdge(new_halfedge_WA); //WA
         }
         for(auto j = 0ul; j < broj_temena; j++){
             edges[j]->setNext(edges[(j + 1) % broj_temena]);
             edges[j]->setPrev(edges[(j - 1 + broj_temena) % broj_temena]);
             edges[j]->setIncidentFace(f);
+
+            edges_WA[j]->setNext(edges_WA[(j + 1) % broj_temena]); //WA
+            edges_WA[j]->setPrev(edges_WA[(j - 1 + broj_temena) % broj_temena]); //WA
+            edges_WA[j]->setIncidentFace(f); //WA
         }
-        f->setOuterComponent(edges[0]);
+        f->setOuterComponent(edges_WA[0]); //WA
         _fields.push_back(f);
     }
 
+    //--------------------------------------------------------------
+    // WA - SVE ISPOD NIJE RELEVANTNO ZA POLUSTRANICE BEZ BLIZANACA
+    //                 (zato je zakomentarisano)
+    //--------------------------------------------------------------
+
+
     /* mapa u kojoj mozemo naci stranicu na osnovu temena na koji "pokazuje"
      * u njoj cemo pamtiti spoljasnje ivice i koristimo je da bi ih kasnije povezali */
+
+    /*
     std::map<Vertex*, HalfEdge*> spoljasnje_ivice;
 
     Field * spoljasnost = new Field();
+    */
 
     /* za svaku polustranicu AB pokusavamo da nadjemo polustranicu BA
      * ako takva ne postoji to znaci da smo naisli na spoljasnju polustranicu
      * i nju smestamo u mapu spoljasnje ivice za kasniju obradu */
+
+    /*
     for(auto edge : _edges){
         auto uslov = [=](HalfEdge* e){
             return e->origin() == edge->next()->origin()
@@ -86,10 +104,14 @@ DCEL::DCEL(std::string imeDatoteke, int h, int w)
             edge->setTwin(*twin);
         }
     }
+    */
+
 
     /* za svaku spoljasnju ivicu trazimo spoljasnju koja joj prethodi
      * to mozemo jednostavno uraditi zbog nacina pravljenja mape spoljasnje_ivice
      * nakon sto zavrsimo "sredjivanje" te poluivice dodajemo je u listu poluivica DCEL strukture */
+
+    /*
     for(auto outer_edge : spoljasnje_ivice){
         outer_edge.second->setPrev(spoljasnje_ivice[outer_edge.second->origin()]);
         spoljasnje_ivice[outer_edge.second->origin()]->setNext(outer_edge.second);
@@ -98,6 +120,8 @@ DCEL::DCEL(std::string imeDatoteke, int h, int w)
 
     spoljasnost->setInnerComponent(spoljasnje_ivice.begin()->second);
     _fields.push_back(spoljasnost);
+    */
+
 }
 
 DCEL::DCEL(const std::vector<QPointF> &tacke)
@@ -240,6 +264,12 @@ HalfEdge *DCEL::findEdge(Vertex *start, Vertex *end)
     return nullptr;
 }
 
+
+//---------------------------------------
+// WA - IMPLEMENTACIJA DODATIH FUNKCIJA
+//      (vidi ga06_dcel.h)
+//---------------------------------------
+
 const std::vector<HalfEdge *> &DCEL::getStraniceBezBlizanaca() const
 {
     return _polustraniceBezBlizanaca;
@@ -253,6 +283,11 @@ HalfEdge *DCEL::getStranica(size_t i) const
 void DCEL::ubaciTeme(Vertex *t)
 {
     _vertices.push_back(t);
+}
+
+void DCEL::ubaciIvicu(HalfEdge *e)
+{
+    _polustraniceBezBlizanaca.emplace_back(e);
 }
 
 /*
@@ -301,6 +336,12 @@ void Vertex::setIncidentEdge(HalfEdge *incidentEdge)
 {
     _incidentEdge = incidentEdge;
 }
+
+
+//---------------------------------------
+// WA - IMPLEMENTACIJA DODATIH FUNKCIJA
+//      (vidi ga06_dcel.h)
+//---------------------------------------
 
 void Vertex::setIndeksUPoligonu(int redniBrPoligona, int indeks)
 {
