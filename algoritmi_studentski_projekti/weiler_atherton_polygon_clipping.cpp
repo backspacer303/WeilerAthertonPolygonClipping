@@ -81,8 +81,10 @@ WeilerAthertonPolygonClipping::WeilerAthertonPolygonClipping(QWidget *pCrtanje,
 
 
     //Konvertovanje parova koordinata nazad u QPointF i upisivanje u lokalni vektor preseka
-    for(std::pair<float, float> p : preseciSaDuplikatima_parovi)
+    for(std::pair<float, float> p : preseciSaDuplikatima_parovi){
         _preseci.emplace_back(QPointF(p.first, p.second));
+        _stanjaPreseka.emplace_back(StanjePreseka::NEOBRADJEN);
+    }
 
 }
 
@@ -151,9 +153,13 @@ void WeilerAthertonPolygonClipping::pokreniAlgoritam()
 
 
 
-    for(QPointF p : _preseci){
+    for(int i=0; i<_preseci.size(); i++){
+
+        QPointF p = _preseci[i];
+
 
         for(int i=0; i<_poligon2.fields().size(); i++){
+
 
             HalfEdge* pocetnaIvica = _poligon2.field(i)->outerComponent();
 
