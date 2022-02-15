@@ -34,9 +34,9 @@ private:
     std::vector<QLineF> _redOdsecenihIvica; //kako se ovaj red menja tako zovemo iscrtavanje
 
     void ubaciPresekeUPoligone();
-    qreal povrsinaTrougla(Vertex* A, Vertex* B, Vertex* C);
-    qreal distanceKvadratF(Vertex* A, Vertex* B);
-    bool tackaPripadaPravoj(const QPointF& tacka, const QPointF& pocetak, const QPointF& kraj);
+    void podebljajPoligonPoIvicama(DCEL& poligon);
+    bool tackaPripadaDuzi(const QPointF& tacka, const QPointF& pocetak, const QPointF& kraj);
+
 };
 
 #endif // WEILERATHERTONPOLYGONCLIPPING_H

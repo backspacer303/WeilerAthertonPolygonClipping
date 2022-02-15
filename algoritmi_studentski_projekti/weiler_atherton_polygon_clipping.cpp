@@ -94,49 +94,7 @@ void WeilerAthertonPolygonClipping::pokreniAlgoritam()
 
     ubaciPresekeUPoligone();
 
-
-    updateCanvasAndBlock();
-
-    int brojIvica = 0;
-
-    for(int i=0; i<_poligon2.fields().size(); i++){
-
-        brojIvica = 0;
-
-        HalfEdge* pocetnaIvica = _poligon2.field(i)->outerComponent();
-
-        //Spoljasnje neograniceno lice preskacemo
-        if(pocetnaIvica == nullptr)
-            continue;
-
-        Vertex* pocetniOrigin = pocetnaIvica->origin();
-
-        _redOdsecenihIvica.emplace_back(QLineF(pocetniOrigin->x(), pocetniOrigin->y(),
-                                               pocetnaIvica->next()->origin()->x(), pocetnaIvica->next()->origin()->y()
-                                              ));
-
-        brojIvica++;
-
-        updateCanvasAndBlock();
-
-        HalfEdge* trenutnaIvica = pocetnaIvica->next();
-        Vertex* trenutniOrigin = trenutnaIvica->origin();
-
-        //Obilazimo ivice koje ogranicavaju lice dokle god ponovo ne dostignemo pocetnu
-        while(  trenutnaIvica != pocetnaIvica )
-        {
-            _redOdsecenihIvica.emplace_back(QLineF(trenutniOrigin->x(), trenutniOrigin->y(),
-                                                   trenutnaIvica->next()->origin()->x(), trenutnaIvica->next()->origin()->y()
-                                                   ));
-            brojIvica++;
-
-            updateCanvasAndBlock();
-            trenutnaIvica = trenutnaIvica->next();
-            trenutniOrigin = trenutnaIvica->origin();
-        }
-        std::cout << "Broj ivica za lice " << i << " je " << brojIvica << std::endl;
-    }
-
+    podebljajPoligonPoIvicama(_poligon2);
 
 
 
@@ -274,7 +232,7 @@ void WeilerAthertonPolygonClipping::ubaciPresekeUPoligone()
             Vertex* zavrsetakPocetneIvice = pocetnaIvica->next()->origin();
 
 
-            if(tackaPripadaPravoj(p, pocetniOrigin->coordinates(), zavrsetakPocetneIvice->coordinates())){
+            if(tackaPripadaDuzi(p, pocetniOrigin->coordinates(), zavrsetakPocetneIvice->coordinates())){
                 //nasli smo ivicu kojoj pripada presek za tekuce lice
                 Vertex* v = new Vertex(p.x(), p.y());
                 _poligon2.ubaciTeme(v);
@@ -306,7 +264,7 @@ void WeilerAthertonPolygonClipping::ubaciPresekeUPoligone()
             while(trenutnaIvica != pocetnaIvica)
             {
                 //da li je presecna tacka na trenutnoj ivici?
-                if(tackaPripadaPravoj(p, trenutniOrigin->coordinates(), trenutnaIvica->next()->origin()->coordinates())){
+                if(tackaPripadaDuzi(p, trenutniOrigin->coordinates(), trenutnaIvica->next()->origin()->coordinates())){
 
                     //cela logika sa papira za
 
@@ -340,21 +298,137 @@ void WeilerAthertonPolygonClipping::ubaciPresekeUPoligone()
             }
         }
     }
+
+
+    //-----------------------------------------------------------------------------
+
+    for(int i=0; i<_preseci.size(); i++){
+
+        QPointF p = _preseci[i];
+
+        std::cout << "p(" << p.x() << ", " << p.y() << ")" <<std::endl;
+
+        for(int j=0; j<_poligon1.fields().size(); j++){
+
+            HalfEdge* pocetnaIvica = _poligon1.field(j)->outerComponent();
+
+            if(pocetnaIvica == nullptr)
+               continue;
+
+            //da li je presecna tacka bas na prvoj ivici?
+            Vertex* pocetniOrigin = pocetnaIvica->origin();
+            Vertex* zavrsetakPocetneIvice = pocetnaIvica->next()->origin();
+
+
+            if(tackaPripadaDuzi(p, pocetniOrigin->coordinates(), zavrsetakPocetneIvice->coordinates())){
+                //nasli smo ivicu kojoj pripada presek za tekuce lice
+                Vertex* v = new Vertex(p.x(), p.y());
+                _poligon1.ubaciTeme(v);
+
+                //1)
+                HalfEdge* sledecaStareIvice = pocetnaIvica->next();
+
+                //2)
+                HalfEdge* novaIvica = new HalfEdge(v);
+                _poligon1.ubaciIvicu(novaIvica);
+                novaIvica->setIncidentFace(_poligon1.field(j));
+
+                //3)
+                pocetnaIvica->setNext(novaIvica);
+
+                //4)
+                novaIvica->setNext(sledecaStareIvice);
+                novaIvica->setPrev(pocetnaIvica);
+
+                //5)
+                sledecaStareIvice->setPrev(novaIvica);
+
+                continue;
+            }
+
+            HalfEdge* trenutnaIvica = pocetnaIvica->next();
+            Vertex* trenutniOrigin = trenutnaIvica->origin();
+
+            while(trenutnaIvica != pocetnaIvica)
+            {
+                //da li je presecna tacka na trenutnoj ivici?
+                if(tackaPripadaDuzi(p, trenutniOrigin->coordinates(), trenutnaIvica->next()->origin()->coordinates())){
+
+                    //cela logika sa papira za
+
+                    Vertex* v = new Vertex(p.x(), p.y());
+                    _poligon1.ubaciTeme(v);
+
+                    //1)
+                    HalfEdge* sledecaStareIvice = trenutnaIvica->next();
+
+                    //2)
+                    HalfEdge* novaIvica = new HalfEdge(v);
+                    _poligon1.ubaciIvicu(novaIvica);
+                    novaIvica->setIncidentFace(_poligon1.field(j));
+
+                    //3)
+                    trenutnaIvica->setNext(novaIvica);
+
+                    //4)
+                    novaIvica->setNext(sledecaStareIvice);
+                    novaIvica->setPrev(trenutnaIvica);
+
+                    //5)
+                    sledecaStareIvice->setPrev(novaIvica);
+
+                    break;
+                }
+
+                //ako nije idemo dalje
+                trenutnaIvica = trenutnaIvica->next();
+                trenutniOrigin = trenutnaIvica->origin();
+            }
+        }
+    }
+
+
+
 }
 
-qreal WeilerAthertonPolygonClipping::povrsinaTrougla(Vertex* A, Vertex* B, Vertex* C)
+void WeilerAthertonPolygonClipping::podebljajPoligonPoIvicama(DCEL &poligon)
 {
-    return (B->x() - A->x())*(C->y() - A->y()) - (C->x() - A->x())*(B->y() - A->y());
+    updateCanvasAndBlock();
+    int brojIvica = 0;
+    for(int i=0; i<poligon.fields().size(); i++){
+
+        brojIvica = 0;
+        HalfEdge* pocetnaIvica = poligon.field(i)->outerComponent();
+        //Spoljasnje neograniceno lice preskacemo
+        if(pocetnaIvica == nullptr)
+            continue;
+        Vertex* pocetniOrigin = pocetnaIvica->origin();
+
+        _redOdsecenihIvica.emplace_back(QLineF(pocetniOrigin->x(), pocetniOrigin->y(),
+                                               pocetnaIvica->next()->origin()->x(), pocetnaIvica->next()->origin()->y()
+                                              ));
+        brojIvica++;
+        updateCanvasAndBlock();
+        HalfEdge* trenutnaIvica = pocetnaIvica->next();
+        Vertex* trenutniOrigin = trenutnaIvica->origin();
+        //Obilazimo ivice koje ogranicavaju lice dokle god ponovo ne dostignemo pocetnu
+        while(  trenutnaIvica != pocetnaIvica )
+        {
+            _redOdsecenihIvica.emplace_back(QLineF(trenutniOrigin->x(), trenutniOrigin->y(),
+                                                   trenutnaIvica->next()->origin()->x(), trenutnaIvica->next()->origin()->y()
+                                                   ));
+            brojIvica++;
+            updateCanvasAndBlock();
+            trenutnaIvica = trenutnaIvica->next();
+            trenutniOrigin = trenutnaIvica->origin();
+        }
+        std::cout << "Broj ivica za lice " << i << " je " << brojIvica << std::endl;
+    }
 }
 
-qreal WeilerAthertonPolygonClipping::distanceKvadratF(Vertex* A, Vertex* B)
-{
-    return (A->x() - B->x())*(A->x() - B->x()) + (A->y() - B->y())*(A->y() - B->y());
-}
 
-bool WeilerAthertonPolygonClipping::tackaPripadaPravoj(const QPointF &tacka, const QPointF &pocetak, const QPointF &kraj)
+bool WeilerAthertonPolygonClipping::tackaPripadaDuzi(const QPointF &tacka, const QPointF &pocetak, const QPointF &kraj)
 {
-
     qreal crossProduct = (tacka.y() - pocetak.y()) * (kraj.x() - pocetak.x()) - (tacka.x() - pocetak.x()) * (kraj.y() - pocetak.y());
 
     if(fabsf(crossProduct) > EPSf)
