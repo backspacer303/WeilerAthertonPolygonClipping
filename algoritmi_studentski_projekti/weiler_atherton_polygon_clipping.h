@@ -10,12 +10,6 @@
 #include "pomocnefunkcije.h"
 
 
-enum class StanjePreseka
-{
-    NEOBRADJEN,
-    OBRADJEN
-};
-
 class WeilerAthertonPolygonClipping : public AlgoritamBaza
 {
 public:
@@ -37,7 +31,6 @@ private:
     PreseciDuzi _algoritamPreseci;
     std::vector<QLineF> _zbirniSkupDuzi;
     std::vector<QPointF> _preseci;
-    std::vector<StanjePreseka> _stanjaPreseka;
     std::vector<QLineF> _redOdsecenihIvica; //kako se ovaj red menja tako zovemo iscrtavanje
 
     void ubaciPresekeUPoligone();

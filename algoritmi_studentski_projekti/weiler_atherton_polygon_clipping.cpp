@@ -83,7 +83,6 @@ WeilerAthertonPolygonClipping::WeilerAthertonPolygonClipping(QWidget *pCrtanje,
     //Konvertovanje parova koordinata nazad u QPointF i upisivanje u lokalni vektor preseka
     for(std::pair<float, float> p : preseciSaDuplikatima_parovi){
         _preseci.emplace_back(QPointF(p.first, p.second));
-        _stanjaPreseka.emplace_back(StanjePreseka::NEOBRADJEN);
     }
 
 }
@@ -92,65 +91,6 @@ void WeilerAthertonPolygonClipping::pokreniAlgoritam()
 {
 
     std::cout << "-----------------------------------------------------------" << std::endl;
-
-    /*
-    for(QPointF p : _preseci){
-
-        bool pripada = false;
-
-        for(Field* polje : _poligon2.fields()){
-
-
-            HalfEdge* pocetnaIvica = polje->outerComponent();
-
-            if(pocetnaIvica == nullptr)
-                continue;
-
-            pripada = tackaPripadaPravoj(p, pocetnaIvica->origin()->coordinates(),
-                                                 pocetnaIvica->next()->origin()->coordinates());
-            if(pripada){
-
-                std::cout << "Presecna tacka p(" << p.x() << ", " << p.y()
-                          << ") pripada ivici pocetak("
-                          << pocetnaIvica->origin()->coordinates().x() << ", " << pocetnaIvica->origin()->coordinates().y()
-                          << ")   kraj("
-                          << pocetnaIvica->next()->origin()->coordinates().x() << ", "
-                          << pocetnaIvica->next()->origin()->coordinates().y()
-                          << ")" << std::endl;
-
-                break;
-            }
-
-            HalfEdge* trenutnaIvica = pocetnaIvica->next();
-
-            while(trenutnaIvica != pocetnaIvica){
-
-                pripada = tackaPripadaPravoj(p, trenutnaIvica->origin()->coordinates(),
-                                                trenutnaIvica->next()->origin()->coordinates());
-
-                if(pripada){
-
-                    std::cout << "Presecna tacka p(" << p.x() << ", " << p.y()
-                              << ") pripada ivici pocetak("
-                              << trenutnaIvica->origin()->coordinates().x() << ", " << trenutnaIvica->origin()->coordinates().y()
-                              << ")   kraj("
-                              << trenutnaIvica->next()->origin()->coordinates().x() << ", "
-                              << trenutnaIvica->next()->origin()->coordinates().y()
-                              << ")" << std::endl;
-                    break;
-                }
-
-                trenutnaIvica = trenutnaIvica->next();
-            }
-
-        }
-
-        if(!pripada)
-            std::cout << "Tacka p(" << p.x() << ", " << p.y() << ") ne pripada ni jednoj ivici" << std::endl;
-    }
-
-    */
-
 
     ubaciPresekeUPoligone();
 
@@ -324,9 +264,6 @@ void WeilerAthertonPolygonClipping::ubaciPresekeUPoligone()
 
         for(int j=0; j<_poligon2.fields().size(); j++){
 
-            if(_stanjaPreseka[i] == StanjePreseka::OBRADJEN)
-                continue;
-
             HalfEdge* pocetnaIvica = _poligon2.field(j)->outerComponent();
 
             if(pocetnaIvica == nullptr)
@@ -359,8 +296,6 @@ void WeilerAthertonPolygonClipping::ubaciPresekeUPoligone()
 
                 //5)
                 sledecaStareIvice->setPrev(novaIvica);
-
-                _stanjaPreseka[i] = StanjePreseka::OBRADJEN;
 
                 continue;
             }
@@ -396,8 +331,6 @@ void WeilerAthertonPolygonClipping::ubaciPresekeUPoligone()
                     //5)
                     sledecaStareIvice->setPrev(novaIvica);
 
-                    _stanjaPreseka[i] = StanjePreseka::OBRADJEN;
-
                     break;
                 }
 
@@ -405,7 +338,6 @@ void WeilerAthertonPolygonClipping::ubaciPresekeUPoligone()
                 trenutnaIvica = trenutnaIvica->next();
                 trenutniOrigin = trenutnaIvica->origin();
             }
-
         }
     }
 }
