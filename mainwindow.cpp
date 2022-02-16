@@ -381,10 +381,12 @@ void MainWindow::on_WeilerAtherton_dugme_clicked()
     wad.setModal(true);
     wad.exec();
 
+
     if(_imeDatotekePoligon_1 == "" || _imeDatotekePoligon_2 == ""){
         QMessageBox::information(this, "Greska!", "Nisu odabrane datoteke!");
         return;
     }
+
 
     napraviNoviAlgoritam();
 

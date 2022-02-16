@@ -8,10 +8,17 @@ WeilerAthertonPolygonClipping::WeilerAthertonPolygonClipping(QWidget *pCrtanje,
                                                              std::string imeDatotekePoligon_1,
                                                              std::string imeDatotekePoligon_2)
     : AlgoritamBaza(pCrtanje, pauzaKoraka, naivni),
-      _poligon1(imeDatotekePoligon_1, pCrtanje->height(), pCrtanje->width()),
-      _poligon2(imeDatotekePoligon_2, pCrtanje->height(), pCrtanje->width()),
       _algoritamPreseci(pCrtanje, pauzaKoraka, naivni, imeDatoteke, brojTacaka)
 {
+
+    if(imeDatotekePoligon_1 != "" && imeDatotekePoligon_2 != ""){
+        _poligon1 = DCEL(imeDatotekePoligon_1, pCrtanje->height(), pCrtanje->width());
+        _poligon2 = DCEL(imeDatotekePoligon_2, pCrtanje->height(), pCrtanje->width());
+    }else{
+        _poligon1 = DCEL("/home/nikola/Desktop/WeilerAthertonPolygonClipping/poligoni/okvir.off", 900, 1566);
+        _poligon2 = DCEL("/home/nikola/Desktop/WeilerAthertonPolygonClipping/poligoni/poligon1.off", 900, 1566);
+    }
+
     //Pravi se zbirni skup duzi
     for(auto i=0ul; i<_poligon1.getStraniceBezBlizanaca().size(); i++){
         QLineF* l = new QLineF(_poligon1.getStranica(i)->origin()->coordinates(),
@@ -146,7 +153,7 @@ void WeilerAthertonPolygonClipping::pokreniAlgoritam()
         //Weiler-Atherton Algoritam za odsecanje poligona
         //************************************************
 
-        updateCanvasAndBlock();
+        AlgoritamBaza_updateCanvasAndBlock();
 
         //oznaka da li smo usli u okvir
         int unutarOkvira = false;
@@ -166,7 +173,7 @@ void WeilerAthertonPolygonClipping::pokreniAlgoritam()
                     unutarOkvira = true;
                     temeUlaska = temenaPoligona[i];
                     _temenaOdsecenihDelova.emplace_back(temenaPoligona[i]);
-                    updateCanvasAndBlock();
+                    AlgoritamBaza_updateCanvasAndBlock();
                 }
 
                 //ako smo prethodno bili u okviru onda smo naisli na presek koji je izlazno teme
@@ -175,7 +182,7 @@ void WeilerAthertonPolygonClipping::pokreniAlgoritam()
                     temeIzlaska = temenaPoligona[i];
 
                     _temenaOdsecenihDelova.emplace_back(temenaPoligona[i]);
-                    updateCanvasAndBlock();
+                    AlgoritamBaza_updateCanvasAndBlock();
 
                     //obilazimo okvir koriscenjem veze koju smo zapamtili kako bismo
                     //duz okvira zatvorili deo koji odsecamo
@@ -184,7 +191,7 @@ void WeilerAthertonPolygonClipping::pokreniAlgoritam()
                     {
                             //zatvaramo ivicama duz okvira sve dok ne dostignemo tacku ulaska
                             _temenaOdsecenihDelova.emplace_back(temenaOkvira[j]);
-                            updateCanvasAndBlock();
+                            AlgoritamBaza_updateCanvasAndBlock();
                             if(temenaOkvira[j]->getVezaZaDrugiPoligon() == temeUlaska)
                                 break;
                     }
@@ -195,13 +202,13 @@ void WeilerAthertonPolygonClipping::pokreniAlgoritam()
                 //dodajemo ga u niz za odsecanje
                 if(unutarOkvira == true){
                     _temenaOdsecenihDelova.emplace_back(temenaPoligona[i]);
-                    updateCanvasAndBlock();
+                    AlgoritamBaza_updateCanvasAndBlock();
                 }
             }
         }
     }
 
-    updateCanvasAndBlock();
+    AlgoritamBaza_updateCanvasAndBlock();
 
     emit animacijaZavrsila();
 }
@@ -345,7 +352,7 @@ void WeilerAthertonPolygonClipping::pokreniNaivniAlgoritam()
         if(prvoTemePripadaOkviru && drugoTemePripadaOkviru){
             _temenaUnutarPoligonaNaivni.emplace_back(pocetnaIvica->origin());
             _temenaUnutarPoligonaNaivni.emplace_back(pocetnaIvica->next()->origin());
-            updateCanvasAndBlock();
+            AlgoritamBaza_updateCanvasAndBlock();
         }
 
         //prelazimo na sledecu ivicu
@@ -366,7 +373,7 @@ void WeilerAthertonPolygonClipping::pokreniNaivniAlgoritam()
             if(prvoTemePripadaOkviru && drugoTemePripadaOkviru){
                 _temenaUnutarPoligonaNaivni.emplace_back(trenutnaIvica->origin());
                 _temenaUnutarPoligonaNaivni.emplace_back(trenutnaIvica->next()->origin());
-                updateCanvasAndBlock();
+                AlgoritamBaza_updateCanvasAndBlock();
             }
             //prelazimo na sledecu ivicu
             trenutnaIvica = trenutnaIvica->next();

@@ -111,7 +111,7 @@ private:
     int _duzinaPauze;
     int _brojSlucajnihObjekata;
 
-    //imena OFF gde se nalaze poligoni
+    //WA imena OFF gde se nalaze poligoni
     std::string _imeDatotekePoligon_1;
     std::string _imeDatotekePoligon_2;
 

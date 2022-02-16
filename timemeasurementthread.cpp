@@ -60,14 +60,24 @@ void TimeMeasurementThread::run()
        /* case TipAlgoritma::PRESEK_PRAVOUGAONIKA:
             pAlgorithm = new PresekPravougaonika(nullptr, 0, false, "", i);
             break;*/
+
+
+        case TipAlgoritma::WEILER_ATHERTON:
+            std::cout << "Pravim algoritam..." << std::endl;
+            pAlgorithm = new WeilerAthertonPolygonClipping(nullptr, 0, false, "", i, "", "");
+            std::cout << "Algoritam napraveljen" << std::endl;
+            break;
+
         default:
             break;
         }
 
         if(pAlgorithm)
         {
+          std::cout << "Algoritam postoji" << std::endl;
 #ifndef SKIP_OPTIMAL
             begin = clock();
+            std::cout << "Zovem pokreniAlgoritam()" << std::endl;
             pAlgorithm->pokreniAlgoritam();
             end = clock();
             optimalTime = double(end - begin) / CLOCKS_PER_SEC;
@@ -77,6 +87,7 @@ void TimeMeasurementThread::run()
 
 #ifndef SKIP_NAIVE
             begin = clock();
+            std::cout << "Zovem pokreniNaivniAlgoritam()" << std::endl;
             pAlgorithm->pokreniNaivniAlgoritam();
             end = clock();
             naiveTime = double(end - begin) / CLOCKS_PER_SEC;
