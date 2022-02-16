@@ -283,6 +283,9 @@ void WeilerAthertonPolygonClipping::crtajAlgoritam(QPainter *painter) const
 
     //GLAVNO ISCRTAVANJE REZULTATA ALGORITMA
     //Cratenje do sada odsecenih ivica poligona
+    //Kada smo zatvorili jedan lanac znaci da smo odsekli jedan deo poligona
+    //tada zelimo narednu ivicu da preskocimo kako ne bismo crtali linije izmedju
+    //poslednjeg temena prvog lanca i prvog temena sledeceg lanca
     Vertex* pocetakLanca;
     bool preskociLiniju = false;
 
@@ -319,40 +322,53 @@ void WeilerAthertonPolygonClipping::crtajAlgoritam(QPainter *painter) const
 
 void WeilerAthertonPolygonClipping::pokreniNaivniAlgoritam()
 {
+    //IDEJA: proci kroz sve ivice poligona i izdvojiti one koje cele leze unutar okvira
+    //ivica lezi unutar okvira ako joj oba temena leze unutar okvira
 
+    //prolazimo kroz sva lica poligona
     for(int i=0; i<_poligon2.fields().size(); i++){
 
         Field* f = _poligon2.field(i);
 
+        //dohvatamo pocetni ivicu poligona
         HalfEdge* pocetnaIvica = f->outerComponent();
 
+        //dohvatamo njena temena
         QPointF prvoTeme = pocetnaIvica->origin()->coordinates();
         QPointF drugoTeme = pocetnaIvica->next()->origin()->coordinates();
 
+        //proveravamo da li pripadaju unutrasnjisti okvira
         bool prvoTemePripadaOkviru = proveriPripadnostOkviru(prvoTeme);
         bool drugoTemePripadaOkviru = proveriPripadnostOkviru(drugoTeme);
 
+        //ako pripadaju pamtimo ih
         if(prvoTemePripadaOkviru && drugoTemePripadaOkviru){
             _temenaUnutarPoligonaNaivni.emplace_back(pocetnaIvica->origin());
             _temenaUnutarPoligonaNaivni.emplace_back(pocetnaIvica->next()->origin());
             updateCanvasAndBlock();
         }
 
-        HalfEdge* trenutnaIvica =pocetnaIvica->next();
+        //prelazimo na sledecu ivicu
+        HalfEdge* trenutnaIvica = pocetnaIvica->next();
 
+        //dokle god se ne vratimo u pocetnu ivicu proveravamo tekuce ivice
         while(trenutnaIvica != pocetnaIvica){
 
+            //dohvatamo temena trenutne ivice
             prvoTeme = trenutnaIvica->origin()->coordinates();
             drugoTeme = trenutnaIvica->next()->origin()->coordinates();
 
+            //proveravamo njihovu pripadnost okviru
             prvoTemePripadaOkviru = proveriPripadnostOkviru(prvoTeme);
             drugoTemePripadaOkviru = proveriPripadnostOkviru(drugoTeme);
 
+            //ako pripadaju pamtimo ih
             if(prvoTemePripadaOkviru && drugoTemePripadaOkviru){
                 _temenaUnutarPoligonaNaivni.emplace_back(trenutnaIvica->origin());
                 _temenaUnutarPoligonaNaivni.emplace_back(trenutnaIvica->next()->origin());
                 updateCanvasAndBlock();
             }
+            //prelazimo na sledecu ivicu
             trenutnaIvica = trenutnaIvica->next();
         }
     }
@@ -435,6 +451,7 @@ void WeilerAthertonPolygonClipping::crtajNaivniAlgoritam(QPainter *painter) cons
     }
 
     //GLAVNO ISCRTAVANJE ZA NAIVNI ALGORITAM
+    //Obilazimo dva-po-dva temena i iscrtavamo ivice izmedju njih
     for(int i=0; i<_temenaUnutarPoligonaNaivni.size()-1; i+=2){
 
         if(_temenaUnutarPoligonaNaivni.size() < 2)
