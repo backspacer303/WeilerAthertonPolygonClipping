@@ -126,6 +126,71 @@ void WeilerAthertonPolygonClipping::pokreniAlgoritam()
         }
     }
 
+    //Specijalan slucaj kada se okvir i poligon dodiruju u jednoj tacki
+    if(_preseci.size() == 0){
+
+        Vertex* v1 = _poligon2.vertex(0);
+        QPointF t1(v1->x(), v1->y());
+        bool pripada1 = proveriPripadnostOkviru(t1);
+
+        Vertex* v2 = _poligon2.vertex(1);
+        QPointF t2(v2->x(), v2->y());
+        bool pripada2 = proveriPripadnostOkviru(t2);
+
+        if(pripada1 && !pripada2){
+            emit animacijaZavrsila();
+            return;
+        }
+    }
+
+    //Specijalan slucaj kada poligon i okvir nemaju preseka
+    if(_preseci.size() == 0){
+
+        //Ako poligon i okvir nemaju preseka tada postoje dve mogucnosti
+        //1) poligon je citav unutar okvira -> tada iscrtavamo sve ivice kao odsecene
+        //2) poligon je citav van okvira -> tada ne iscrtavamo nista
+
+        Vertex* v = _poligon2.vertex(0);
+        QPointF t(v->x(), v->y());
+        bool pripada = proveriPripadnostOkviru(t);
+
+        //Ako makar jedno teme pripada okviru tada su sva temena u okviru
+        //inace su sva van njega
+        if(pripada){
+
+            for(int i=0; i<_poligon2.fields().size(); i++){
+                Field* f = _poligon2.field(i);
+
+                HalfEdge* pocetnaIvica = f->outerComponent();
+                _temenaOdsecenihDelova.emplace_back(pocetnaIvica->origin());
+                AlgoritamBaza_updateCanvasAndBlock();
+
+                HalfEdge* trenuta = pocetnaIvica->next();
+                while(trenuta != pocetnaIvica){
+
+                    _temenaOdsecenihDelova.emplace_back(trenuta->origin());
+                    AlgoritamBaza_updateCanvasAndBlock();
+
+                    trenuta = trenuta->next();
+                }
+                //Dodajemo jos jednom pocetno teme da bismo zatvorili lanac
+                _temenaOdsecenihDelova.emplace_back(trenuta->origin());
+                AlgoritamBaza_updateCanvasAndBlock();
+            }
+
+            emit animacijaZavrsila();
+            return;
+
+        }else{
+            //Nema iscrtavanja jer je poligon van okvira
+            emit animacijaZavrsila();
+            return;
+        }
+
+    }
+
+
+
     //ZA SVAKO LICE POLIGONA IZVRSAVAMO ALGORITAM
     std::vector<Vertex*> temenaPoligona;
     for(int i=0; i<_poligon2.fields().size(); i++){
