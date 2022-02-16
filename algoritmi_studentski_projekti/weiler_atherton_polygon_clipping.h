@@ -32,12 +32,14 @@ private:
     std::vector<QLineF> _zbirniSkupDuzi;
     std::vector<QPointF> _preseci;
     HalfEdge* _pocetnaIvica;
-    std::vector<QLineF> _redOdsecenihIvica; //kako se ovaj red menja tako zovemo iscrtavanje
+    std::vector<QLineF> _redOdsecenihIvica;
+    std::vector<Vertex*> _temenaOdsecenihDelova; //kako se ovaj red menja tako zovemo iscrtavanje
+
 
     void ubaciPresekeUPoligone();
     void podebljajPoligonPoIvicama(DCEL& poligon);
     bool tackaPripadaDuzi(const QPointF& tacka, const QPointF& pocetak, const QPointF& kraj);
-    HalfEdge* pronadjiPocetnuIvicu();
+    HalfEdge* pronadjiPocetnuIvicu(HalfEdge* prvaIvicaLica);
     bool proveriPripadnostOkviru(QPointF teme);
 
 };

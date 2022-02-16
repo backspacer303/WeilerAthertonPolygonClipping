@@ -130,14 +130,17 @@ DCEL::DCEL(const std::vector<QPointF> &tacke)
 }
 
 DCEL::~DCEL() {
-    for (auto v: _vertices)
+    /*
+    for (auto v: _vertices){
         delete v;
+    }
 
     for (auto e: _edges)
         delete e;
 
     for (auto f: _fields)
         delete f;
+        */
 }
 
 Vertex *DCEL::vertex(size_t i) const

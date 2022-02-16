@@ -87,6 +87,8 @@ public:
     void setVezaZaDrugiPoligon(Vertex* v);
     Vertex *getVezaZaDrugiPoligon();
 
+    int _indeksUPoligonu;
+
 private:
 
     bool _temeJePresecno;         //WA zastavica koja oznacava da li je teme presecno za dva poligona
