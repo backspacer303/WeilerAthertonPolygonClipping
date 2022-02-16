@@ -319,12 +319,138 @@ void WeilerAthertonPolygonClipping::crtajAlgoritam(QPainter *painter) const
 
 void WeilerAthertonPolygonClipping::pokreniNaivniAlgoritam()
 {
+
+    for(int i=0; i<_poligon2.fields().size(); i++){
+
+        Field* f = _poligon2.field(i);
+
+        HalfEdge* pocetnaIvica = f->outerComponent();
+
+        QPointF prvoTeme = pocetnaIvica->origin()->coordinates();
+        QPointF drugoTeme = pocetnaIvica->next()->origin()->coordinates();
+
+        bool prvoTemePripadaOkviru = proveriPripadnostOkviru(prvoTeme);
+        bool drugoTemePripadaOkviru = proveriPripadnostOkviru(drugoTeme);
+
+        if(prvoTemePripadaOkviru && drugoTemePripadaOkviru){
+            _temenaUnutarPoligonaNaivni.emplace_back(pocetnaIvica->origin());
+            _temenaUnutarPoligonaNaivni.emplace_back(pocetnaIvica->next()->origin());
+            updateCanvasAndBlock();
+        }
+
+        HalfEdge* trenutnaIvica =pocetnaIvica->next();
+
+        while(trenutnaIvica != pocetnaIvica){
+
+            prvoTeme = trenutnaIvica->origin()->coordinates();
+            drugoTeme = trenutnaIvica->next()->origin()->coordinates();
+
+            prvoTemePripadaOkviru = proveriPripadnostOkviru(prvoTeme);
+            drugoTemePripadaOkviru = proveriPripadnostOkviru(drugoTeme);
+
+            if(prvoTemePripadaOkviru && drugoTemePripadaOkviru){
+                _temenaUnutarPoligonaNaivni.emplace_back(trenutnaIvica->origin());
+                _temenaUnutarPoligonaNaivni.emplace_back(trenutnaIvica->next()->origin());
+                updateCanvasAndBlock();
+            }
+            trenutnaIvica = trenutnaIvica->next();
+        }
+    }
+
     emit animacijaZavrsila();
 }
 
 void WeilerAthertonPolygonClipping::crtajNaivniAlgoritam(QPainter *painter) const
 {
     if (!painter) return;
+
+    QPen pen = painter->pen();
+
+    //Crtanje poligona s kojim se odseca
+    for(auto i=0ul; i<_poligon1.getStraniceBezBlizanaca().size(); i++)
+    {
+        pen.setColor(Qt::red);
+        painter->setPen(pen);
+        painter->drawLine(_poligon1.getStranica(i)->origin()->coordinates(),
+                          _poligon1.getStranica(i)->next()->origin()->coordinates());
+    }
+
+    //Crtanje temena poligona sa kojim se odseca
+    int curr_num = 0;
+    painter->setBrush(Qt::red);
+    painter->setPen(Qt::white);
+    for(Vertex* v: _poligon1.vertices())
+    {
+        painter->drawEllipse(v->coordinates(), 10, 10);
+        painter->save();
+        painter->scale(1, -1);
+        painter->translate(0, -2*v->y());
+
+        painter->drawText(QPointF(v->x() - 4, v->y() + 4),
+                         QString::number(curr_num));
+        curr_num++;
+        painter->restore();
+    }
+
+    //Crtanje poligona koji se odseca
+    for(auto i=0ul; i<_poligon2.getStraniceBezBlizanaca().size(); i++)
+    {
+        pen.setColor(Qt::yellow);
+        painter->setPen(pen);
+        painter->drawLine(_poligon2.getStranica(i)->origin()->coordinates(),
+                         _poligon2.getStranica(i)->next()->origin()->coordinates());
+    }
+
+
+    //Crtanje temena poligona koji se odseca
+    curr_num = 0;
+    painter->setBrush(Qt::red);
+    painter->setPen(Qt::white);
+    for(Vertex* v: _poligon2.vertices())
+    {
+        painter->drawEllipse(v->coordinates(), 10, 10);
+        painter->save();
+        painter->scale(1, -1);
+        painter->translate(0, -2*v->y());
+        painter->drawText(QPointF(v->x() - 4, v->y() + 4),
+                         QString::number(curr_num));
+        curr_num++;
+        painter->restore();
+    }
+
+    //Crtanje presecnih tacaka
+    curr_num = 0;
+    painter->setBrush(Qt::blue);
+    painter->setPen(Qt::white);
+    for(auto tacka : _preseci)
+    {
+        painter->drawEllipse(tacka, 10, 10);
+        painter->save();
+        painter->scale(1, -1);
+        painter->translate(0, -2*tacka.y());
+        painter->drawText(QPointF(tacka.x() - 4, tacka.y() + 4),
+                         QString::number(curr_num));
+        curr_num++;
+        painter->restore();
+    }
+
+    //GLAVNO ISCRTAVANJE ZA NAIVNI ALGORITAM
+    for(int i=0; i<_temenaUnutarPoligonaNaivni.size()-1; i+=2){
+
+        if(_temenaUnutarPoligonaNaivni.size() < 2)
+            break;
+
+        Vertex* v1 = _temenaUnutarPoligonaNaivni[i];
+        Vertex* v2 = _temenaUnutarPoligonaNaivni[i+1];
+
+        QLineF l(_temenaUnutarPoligonaNaivni[i]->x(), _temenaUnutarPoligonaNaivni[i]->y(),
+                 _temenaUnutarPoligonaNaivni[i+1]->x(), _temenaUnutarPoligonaNaivni[i+1]->y());
+
+        pen.setColor(Qt::green);
+        painter->setPen(pen);
+        painter->drawLine(l);
+    }
+
 }
 
 void WeilerAthertonPolygonClipping::ubaciPresekeUPoligone()

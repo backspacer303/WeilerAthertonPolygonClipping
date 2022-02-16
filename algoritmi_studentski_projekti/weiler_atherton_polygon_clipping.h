@@ -33,7 +33,7 @@ private:
     std::vector<QPointF> _preseci;
     HalfEdge* _pocetnaIvica;
     std::vector<Vertex*> _temenaOdsecenihDelova; //kako se ovaj red menja tako zovemo iscrtavanje
-
+    std::vector<Vertex*> _temenaUnutarPoligonaNaivni;
 
     void ubaciPresekeUPoligone();
     void podebljajPoligonPoIvicama(DCEL& poligon);
