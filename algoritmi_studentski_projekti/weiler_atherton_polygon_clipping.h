@@ -32,7 +32,6 @@ private:
     std::vector<QLineF> _zbirniSkupDuzi;
     std::vector<QPointF> _preseci;
     HalfEdge* _pocetnaIvica;
-    std::vector<QLineF> _redOdsecenihIvica;
     std::vector<Vertex*> _temenaOdsecenihDelova; //kako se ovaj red menja tako zovemo iscrtavanje
 
 

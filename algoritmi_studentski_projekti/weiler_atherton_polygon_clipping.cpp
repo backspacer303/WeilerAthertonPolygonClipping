@@ -264,15 +264,6 @@ void WeilerAthertonPolygonClipping::crtajAlgoritam(QPainter *painter) const
         painter->restore();
     }
 
-    //TODO: izbaciti ili zameniti naziv promenjljive
-    for(QLineF l : _redOdsecenihIvica)
-    {
-        /* Crta se poligon */
-        pen.setColor(Qt::green);
-        painter->setPen(pen);
-        painter->drawLine(l);
-    }
-
     //Crtanje presecnih tacaka
     curr_num = 0;
     painter->setBrush(Qt::blue);
@@ -497,44 +488,6 @@ void WeilerAthertonPolygonClipping::ubaciPresekeUPoligone()
         }
     }
 }
-
-void WeilerAthertonPolygonClipping::podebljajPoligonPoIvicama(DCEL &poligon)
-{
-    //FJA JE SLUZILA ZA DEBAGOVANJE, NEMA DRUGI ZNACAJ
-    updateCanvasAndBlock();
-    int brojIvica = 0;
-    for(int i=0; i<poligon.fields().size(); i++){
-
-        if(i != 0)
-            continue;
-
-        brojIvica = 0;
-        HalfEdge* pocetnaIvica = poligon.field(i)->outerComponent();
-        //Spoljasnje neograniceno lice preskacemo
-        if(pocetnaIvica == nullptr)
-            continue;
-        Vertex* pocetniOrigin = pocetnaIvica->origin();
-
-        _redOdsecenihIvica.emplace_back(QLineF(pocetniOrigin->x(), pocetniOrigin->y(),
-                                               pocetnaIvica->next()->origin()->x(), pocetnaIvica->next()->origin()->y()));
-        brojIvica++;
-        updateCanvasAndBlock();
-        HalfEdge* trenutnaIvica = pocetnaIvica->next();
-        Vertex* trenutniOrigin = trenutnaIvica->origin();
-        //Obilazimo ivice koje ogranicavaju lice dokle god ponovo ne dostignemo pocetnu
-        while(  trenutnaIvica != pocetnaIvica )
-        {
-            _redOdsecenihIvica.emplace_back(QLineF(trenutniOrigin->x(), trenutniOrigin->y(),
-                                                   trenutnaIvica->next()->origin()->x(), trenutnaIvica->next()->origin()->y()));
-            brojIvica++;
-            updateCanvasAndBlock();
-            trenutnaIvica = trenutnaIvica->next();
-            trenutniOrigin = trenutnaIvica->origin();
-        }
-        std::cout << "Broj ivica za lice " << i << " je " << brojIvica << std::endl;
-    }
-}
-
 
 bool WeilerAthertonPolygonClipping::tackaPripadaDuzi(const QPointF &tacka, const QPointF &pocetak, const QPointF &kraj)
 {
